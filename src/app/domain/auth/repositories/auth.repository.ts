@@ -1,9 +1,9 @@
 import { Observable } from 'rxjs';
 import { User, LoginRequest } from '../models/user.model';
 
-export interface AuthRepository {
-  login(credentials: LoginRequest): Observable<User>;
-  logout(): void;
-  getCurrentUser(): User | null;
-  isLoggedIn(): boolean;
+export abstract class AuthRepository {
+  abstract login(credentials: LoginRequest): Observable<User>;
+  abstract logout(): void;
+  abstract getCurrentUser(): User | null;
+  abstract isLoggedIn(): boolean;
 }

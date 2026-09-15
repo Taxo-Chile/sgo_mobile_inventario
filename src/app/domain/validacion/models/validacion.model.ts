@@ -28,11 +28,13 @@ export interface Captura {
 
 export interface ValidacionCaptura {
   captura_id: number;
+  tag_id: number;
   producto_id: number;
   producto_nombre: string;
   producto_sku: string;
   c1_cantidad: number;
   c2_cantidad: number | null;
+  unidad_medida: string;
   estado: 'PENDIENTE' | 'CONFIRMADA' | 'MODIFICADA';
   motivo_modificacion?: string;
 }

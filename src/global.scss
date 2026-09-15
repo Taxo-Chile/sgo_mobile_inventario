@@ -57,7 +57,7 @@ h1, h2, h3, .page-title {
 }
 
 ion-header ion-toolbar {
-  --min-height: 56px;
+  --min-height: 64px;
   --border-width: 0 0 1px 0;
   --border-style: solid;
 }
@@ -72,7 +72,7 @@ ion-header {
 
 ion-title {
   font-family: 'Sora', var(--ion-font-family);
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 700;
   letter-spacing: -0.01em;
 }
@@ -80,22 +80,22 @@ ion-title {
 @layer components {
   .page-inner {
     @apply flex flex-col;
-    @apply max-w-[420px] mx-auto px-5;
+    @apply max-w-[960px] mx-auto px-8;
     @apply gap-6;
   }
 
   .page-title {
-    @apply text-2xl font-extrabold leading-tight;
+    @apply text-3xl font-extrabold leading-tight;
     color: var(--app-text);
   }
 
   .page-subtitle {
-    @apply text-sm leading-relaxed;
+    @apply text-base leading-relaxed;
     color: var(--app-text-muted);
   }
 
   .field-label {
-    @apply block text-[11px] font-medium uppercase;
+    @apply block text-[12px] font-medium uppercase;
     font-family: theme('fontFamily.mono');
     letter-spacing: 0.08em;
     color: var(--app-text-muted);
@@ -113,11 +113,11 @@ ion-title {
     --color: var(--app-text);
     --padding-start: 1rem;
     --padding-end: 1rem;
-    --padding-top: 14px;
-    --padding-bottom: 14px;
+    --padding-top: 16px;
+    --padding-bottom: 16px;
 
-    @apply w-full text-[15px] transition-shadow duration-200;
-    min-height: 56px;
+    @apply w-full text-[16px] transition-shadow duration-200;
+    min-height: 60px;
     border-radius: var(--border-radius);
 
     &:focus-within {
@@ -141,12 +141,12 @@ ion-title {
     --box-shadow: 0 8px 24px -8px rgba(230, 18, 106, 0.45);
     --color: #ffffff;
     --opacity-disabled: 1;
-    --padding-start: 1.25rem;
-    --padding-end: 1.25rem;
+    --padding-start: 1.5rem;
+    --padding-end: 1.5rem;
 
-    @apply w-full text-[15px] font-semibold normal-case tracking-normal;
+    @apply w-full text-[16px] font-semibold normal-case tracking-normal;
     @apply transition-transform duration-150;
-    min-height: 56px;
+    min-height: 60px;
     text-transform: none;
 
     &:not([disabled]):active {
@@ -161,12 +161,12 @@ ion-title {
 
   .btn-action {
     --border-radius: 12px;
-    --padding-start: 1.25rem;
-    --padding-end: 1.25rem;
+    --padding-start: 1.5rem;
+    --padding-end: 1.5rem;
     --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
-    @apply w-full text-[15px] font-semibold;
-    min-height: 56px;
+    @apply w-full text-[16px] font-semibold;
+    min-height: 60px;
     text-transform: none;
     transition: transform 0.15s ease, opacity 0.15s ease;
 
@@ -200,20 +200,20 @@ ion-title {
   }
 
   .error-pill {
-    @apply flex items-start gap-3 px-4 py-3.5 rounded-2xl text-[13px] font-medium;
+    @apply flex items-start gap-4 px-5 py-4 rounded-2xl text-[14px] font-medium;
     background: var(--app-error-surface);
     border: 1px solid var(--app-error-border);
     color: var(--app-error-text);
 
     ion-icon {
-      @apply text-lg shrink-0;
+      @apply text-xl shrink-0;
       color: var(--app-error);
       margin-top: 1px;
     }
   }
 
   .version-app {
-    @apply text-[11px];
+    @apply text-[12px];
     color: var(--app-text-muted);
     text-align: center;
     margin: 0.75rem 0 0;
@@ -233,8 +233,8 @@ ion-title {
   }
 
   .badge-status {
-    @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1;
-    @apply text-[11px] font-semibold uppercase tracking-wider;
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1.5;
+    @apply text-[12px] font-semibold uppercase tracking-wider;
   }
 
   .badge-pending {

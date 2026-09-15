@@ -16,7 +16,7 @@ import { ConnectivityBannerComponent } from '../../shared/components/connectivit
 })
 export class HomePage implements OnInit {
   private router = inject(Router);
-  private menu = inject(MenuController);
+  menu = inject(MenuController);
   private authState = inject(AuthState);
   private getAgendas = inject(GetAgendasUseCase);
   private agendaState = inject(AgendaState);
