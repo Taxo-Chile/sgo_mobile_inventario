@@ -61,6 +61,10 @@ export class ValidacionState {
     );
   }
 
+  agregarCaptura(captura: ValidacionCaptura): void {
+    this._capturas.update((capturas) => [...capturas, captura]);
+  }
+
   clear(): void {
     this._validacionTAG.set(null);
     this._capturas.set([]);

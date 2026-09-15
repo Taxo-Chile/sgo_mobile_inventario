@@ -8,6 +8,7 @@ import { ValidacionState } from '../../../state/validacion/validacion.state';
 import { NotificationService } from '../../../shared/services/notification.service';
 import { ConnectivityBannerComponent } from '../../../shared/components/connectivity-banner/connectivity-banner.component';
 import { Agenda, TagResumen } from '../../../domain/agenda/models/agenda.model';
+import { BusinessRulesService, BusinessRuleResult } from '../../../shared/services/business-rules.service';
 
 @Component({
   selector: 'app-agenda-detail',
@@ -23,10 +24,12 @@ export class AgendaDetailPage implements OnInit {
   private agendaState = inject(AgendaState);
   private validacionState = inject(ValidacionState);
   private notification = inject(NotificationService);
+  private businessRules = inject(BusinessRulesService);
 
   agenda = signal<Agenda | null>(null);
   tags = signal<TagResumen[]>([]);
   loading = signal(true);
+  rules = signal<BusinessRuleResult | null>(null);
 
   ngOnInit() {
     const agendaId = Number(this.route.snapshot.paramMap.get('id'));
@@ -60,6 +63,7 @@ export class AgendaDetailPage implements OnInit {
       next: (tags) => {
         this.agendaState.setTags(tags);
         this.tags.set(tags);
+        this.rules.set(this.businessRules.evaluar(tags));
         this.loading.set(false);
       },
       error: () => {
@@ -75,6 +79,24 @@ export class AgendaDetailPage implements OnInit {
     }
     this.validacionState.clear();
     this.router.navigate(['/tag', tag.id]);
+  }
+
+  openPreVariance() {
+    const agenda = this.agenda();
+    if (!agenda) return;
+    this.router.navigate(['/pre-variance', agenda.id]);
+  }
+
+  openRecuento() {
+    const agenda = this.agenda();
+    if (!agenda) return;
+    this.router.navigate(['/recuento', agenda.id]);
+  }
+
+  openCierres() {
+    const agenda = this.agenda();
+    if (!agenda) return;
+    this.router.navigate(['/cierres', agenda.id]);
   }
 
   goBack() {

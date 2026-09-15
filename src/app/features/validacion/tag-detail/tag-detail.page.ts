@@ -1,11 +1,12 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ModalController } from '@ionic/angular';
 import { ValidacionState } from '../../../state/validacion/validacion.state';
 import { GetTAGDetalleUseCase } from '../../../application/validacion/get-tag-detalle.usecase';
 import { NotificationService } from '../../../shared/services/notification.service';
 import { ConnectivityBannerComponent } from '../../../shared/components/connectivity-banner/connectivity-banner.component';
 import { ValidacionCaptura } from '../../../domain/validacion/models/validacion.model';
+import { IncorporarSkuModalComponent } from '../../../shared/components/incorporar-sku-modal/incorporar-sku-modal.component';
 
 @Component({
   selector: 'app-tag-detail',
@@ -20,6 +21,7 @@ export class TagDetailPage implements OnInit {
   private validacionState = inject(ValidacionState);
   private getTAGDetalle = inject(GetTAGDetalleUseCase);
   private notification = inject(NotificationService);
+  private modalCtrl = inject(ModalController);
 
   validacionTAG = this.validacionState.validacionTAG;
   capturas = this.validacionState.capturas;
@@ -55,5 +57,23 @@ export class TagDetailPage implements OnInit {
 
   goBack() {
     this.router.navigate(['/home']);
+  }
+
+  async openIncorporar() {
+    const tag = this.validacionTAG()?.tag;
+    if (!tag) return;
+
+    const modal = await this.modalCtrl.create({
+      component: IncorporarSkuModalComponent,
+      componentProps: { tagId: tag.id, tagTipo: tag.tipo },
+    });
+
+    await modal.present();
+
+    const { data } = await modal.onWillDismiss();
+    if (data) {
+      this.validacionState.agregarCaptura(data);
+      this.notification.success('SKU incorporado correctamente');
+    }
   }
 }

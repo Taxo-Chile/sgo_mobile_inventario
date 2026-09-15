@@ -38,6 +38,30 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: 'pre-variance/:id',
+    loadComponent: () =>
+      import('./features/pre-variance/pre-variance.page').then(
+        (m) => m.PreVariancePage
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'recuento/:id',
+    loadComponent: () =>
+      import('./features/recuento/recuento.page').then(
+        (m) => m.RecuentoPage
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'cierres/:id',
+    loadComponent: () =>
+      import('./features/cierres/cierres.page').then(
+        (m) => m.CierresPage
+      ),
+    canActivate: [authGuard],
+  },
+  {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full',
