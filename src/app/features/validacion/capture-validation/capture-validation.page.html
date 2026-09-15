@@ -1,0 +1,88 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text="Volver"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Validar Captura</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <app-connectivity-banner />
+
+  <div class="page-inner">
+    @if (captura(); as captura) {
+      <div class="flex flex-col gap-2">
+        <h1 class="page-title">{{ captura.producto_nombre }}</h1>
+        <p class="page-subtitle">SKU: {{ captura.producto_sku }}</p>
+      </div>
+
+      <div class="card p-4 flex flex-col gap-4">
+        <div class="flex flex-col gap-2">
+          <span class="field-label">Cantidad C1 (Original)</span>
+          <div class="flex items-center gap-2 p-3 rounded-xl" style="background: var(--app-bg)">
+            <span class="text-2xl font-bold" style="color: var(--app-text)">{{ captura.c1_cantidad }}</span>
+            <span class="text-sm" style="color: var(--app-text-muted)">{{ captura.unidad_medida }}</span>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <span class="field-label">Modo de Validación</span>
+          <div class="grid grid-cols-2 gap-2">
+            <ion-button
+              class="btn-action btn-success"
+              [class.btn-outline]="modo() !== 'CONFIRMAR'"
+              (click)="setModo('CONFIRMAR')"
+            >
+              <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+              Confirmar
+            </ion-button>
+            <ion-button
+              class="btn-action btn-warning"
+              [class.btn-outline]="modo() !== 'MODIFICAR'"
+              (click)="setModo('MODIFICAR')"
+            >
+              <ion-icon name="create-outline" slot="start"></ion-icon>
+              Modificar
+            </ion-button>
+          </div>
+        </div>
+
+        @if (modo() === 'MODIFICAR') {
+          <div class="flex flex-col gap-2">
+            <span class="field-label">Cantidad C2 (Nueva)</span>
+            <ion-input
+              class="input-base"
+              type="number"
+              placeholder="Ingresa cantidad"
+              [value]="c2Cantidad()"
+              (ionInput)="c2Cantidad.set(+$event.detail.value!)"
+            ></ion-input>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <span class="field-label">Motivo de Modificación</span>
+            <ion-textarea
+              class="input-base"
+              placeholder="Describe el motivo..."
+              [value]="motivo()"
+              (ionInput)="motivo.set($event.detail.value!)"
+              [autoGrow]="true"
+              [rows]="3"
+            ></ion-textarea>
+          </div>
+        }
+      </div>
+
+      <ion-button class="btn-primary" (click)="guardar()">
+        @if (modo() === 'CONFIRMAR') {
+          <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+          Confirmar Cantidad
+        } @else {
+          <ion-icon name="save-outline" slot="start"></ion-icon>
+          Guardar Modificación
+        }
+      </ion-button>
+    }
+  </div>
+</ion-content>

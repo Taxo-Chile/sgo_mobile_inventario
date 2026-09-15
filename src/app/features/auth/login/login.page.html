@@ -1,0 +1,63 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>SGO Inventario</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="page-inner">
+    <div class="flex flex-col gap-2">
+      <h1 class="page-title">Bienvenido</h1>
+      <p class="page-subtitle">Ingresa tus credenciales para continuar</p>
+    </div>
+
+    <div class="flex flex-col gap-4">
+      <div class="flex flex-col gap-2">
+        <label class="field-label">RUT</label>
+        <ion-input
+          class="input-base"
+          placeholder="Ej: 12345678-5"
+          inputmode="text"
+          [value]="rut()"
+          (ionInput)="rut.set($event.detail.value!)"
+          (keyup.enter)="onLogin()"
+        ></ion-input>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label class="field-label">Contraseña</label>
+        <ion-input
+          class="input-base"
+          type="password"
+          placeholder="••••••"
+          [value]="password()"
+          (ionInput)="password.set($event.detail.value!)"
+          (keyup.enter)="onLogin()"
+        ></ion-input>
+      </div>
+
+      @if (errorMessage()) {
+        <div class="error-pill">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          <span>{{ errorMessage() }}</span>
+        </div>
+      }
+
+      <ion-button
+        class="btn-primary"
+        type="button"
+        [disabled]="loading()"
+        (click)="onLogin()"
+      >
+        @if (loading()) {
+          <ion-spinner name="crescent" slot="start"></ion-spinner>
+          Ingresando...
+        } @else {
+          Iniciar Sesión
+        }
+      </ion-button>
+    </div>
+
+    <p class="version-app">SGO Tablet v0.1.0</p>
+  </div>
+</ion-content>

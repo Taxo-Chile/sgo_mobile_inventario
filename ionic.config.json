@@ -1,0 +1,7 @@
+{
+  "name": "sgo_mobile_tmp",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

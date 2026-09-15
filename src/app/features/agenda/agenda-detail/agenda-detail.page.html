@@ -1,0 +1,75 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home" text="Volver"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ agenda()?.tienda_nombre || 'Detalle' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <app-connectivity-banner />
+
+  <div class="page-inner">
+    @if (agenda(); as agenda) {
+      <div class="flex flex-col gap-2">
+        <h1 class="page-title">{{ agenda.tienda_nombre }}</h1>
+        <p class="page-subtitle">RUT: {{ agenda.tienda_rut }} • {{ agenda.fecha }}</p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div class="card p-4 flex flex-col items-center gap-2">
+          <span class="text-2xl font-bold" style="color: var(--app-primary)">{{ agenda.total_tags }}</span>
+          <span class="text-xs" style="color: var(--app-text-muted)">Total TAGs</span>
+        </div>
+        <div class="card p-4 flex flex-col items-center gap-2">
+          <span class="text-2xl font-bold" style="color: var(--app-success)">{{ agenda.tags_contados }}</span>
+          <span class="text-xs" style="color: var(--app-text-muted)">Validados</span>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <h2 class="text-sm font-semibold" style="color: var(--app-text)">TAGs por Validar</h2>
+
+        @if (tags().length === 0) {
+          <div class="flex flex-col items-center py-8 gap-4">
+            <ion-icon name="pricetags-outline" class="text-5xl" style="color: var(--app-text-muted)"></ion-icon>
+            <p class="text-center text-sm" style="color: var(--app-text-muted)">No hay TAGs registrados</p>
+          </div>
+        } @else {
+          <div class="flex flex-col gap-2">
+            @for (tag of tags(); track tag.id) {
+              <ion-card button (click)="openTag(tag)" class="card m-0" [class.card-highlight]="tag.validacion_estado === 'EN_CURSO'">
+                <ion-card-content class="flex items-center justify-between p-4">
+                  <div class="flex flex-col gap-1">
+                    <div class="flex items-center gap-2">
+                      <span class="badge-status text-[10px]"
+                        [class.badge-active]="tag.tipo === 'ALTILLO'"
+                        [class.badge-pending]="tag.tipo === 'PDV'">
+                        {{ tag.tipo }}
+                      </span>
+                      <span class="text-sm font-bold" style="color: var(--app-text)">{{ tag.cod_sod }}</span>
+                    </div>
+                    <span class="text-xs" style="color: var(--app-text-muted)">
+                      {{ tag.total_contados }}/{{ tag.total_productos }} productos
+                    </span>
+                  </div>
+
+                  <div class="flex items-center gap-2">
+                    @if (tag.estado === 'ANULADO') {
+                      <span class="badge-status badge-pending text-[10px]">ANULADO</span>
+                    } @else if (tag.validacion_estado === 'VALIDADO') {
+                      <ion-icon name="checkmark-circle" class="text-xl" style="color: var(--app-success)"></ion-icon>
+                    } @else {
+                      <ion-icon name="chevron-forward" class="text-lg" style="color: var(--app-text-muted)"></ion-icon>
+                    }
+                  </div>
+                </ion-card-content>
+              </ion-card>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+</ion-content>

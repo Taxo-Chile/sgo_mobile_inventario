@@ -1,0 +1,119 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button menu="main-menu"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Mis Tiendas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-menu content-id="main-content" menuId="main-menu" side="start">
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>Menú</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content>
+    <div class="flex flex-col h-full">
+      <div class="flex items-center gap-3 px-4 py-5 border-b" style="border-color: var(--app-menu-border)">
+        <ion-avatar class="menu-avatar">
+          <div class="w-full h-full flex items-center justify-center rounded-full" style="background: var(--app-primary); color: white; font-weight: 700; font-size: 18px">
+            {{ user()?.nombre?.charAt(0) || 'U' }}
+          </div>
+        </ion-avatar>
+        <div class="flex flex-col">
+          <span class="menu-user-name text-sm font-semibold">{{ user()?.nombre || 'Usuario' }}</span>
+          <span class="menu-user-rut text-xs">{{ user()?.rut }}</span>
+        </div>
+      </div>
+
+      <ion-list lines="none" class="flex-1">
+        <ion-item button detail (click)="menu.close()">
+          <ion-icon name="home-outline" slot="start"></ion-icon>
+          <ion-label>Inicio</ion-label>
+        </ion-item>
+        <ion-item button detail (click)="menu.close()">
+          <ion-icon name="stats-chart-outline" slot="start"></ion-icon>
+          <ion-label>Reportes</ion-label>
+        </ion-item>
+        <ion-item button detail (click)="menu.close()">
+          <ion-icon name="settings-outline" slot="start"></ion-icon>
+          <ion-label>Configuración</ion-label>
+        </ion-item>
+      </ion-list>
+
+      <div class="px-4 py-3">
+        <ion-item button class="menu-logout-item" detail="false" (click)="logout()">
+          <ion-icon name="log-out-outline" slot="start"></ion-icon>
+          <ion-label>Cerrar Sesión</ion-label>
+        </ion-item>
+      </div>
+
+      <div class="version-menu text-center pb-4">SGO Tablet v0.1.0</div>
+    </div>
+  </ion-content>
+</ion-menu>
+
+<ion-content id="main-content">
+  <app-connectivity-banner />
+
+  <div class="page-inner">
+    <div class="flex flex-col gap-2">
+      <h1 class="page-title">Mis Tiendas</h1>
+      <p class="page-subtitle">Selecciona una tienda para validar inventario</p>
+    </div>
+
+    @if (loading()) {
+      <div class="flex justify-center py-8">
+        <ion-spinner name="crescent"></ion-spinner>
+      </div>
+    } @else if (agendas().length === 0) {
+      <div class="flex flex-col items-center py-12 gap-4">
+        <ion-icon name="storefront-outline" class="text-6xl" style="color: var(--app-text-muted)"></ion-icon>
+        <p class="text-center" style="color: var(--app-text-muted)">No hay tiendas asignadas</p>
+      </div>
+    } @else {
+      <div class="flex flex-col gap-3">
+        @for (agenda of agendas(); track agenda.id) {
+          <ion-card button (click)="openAgenda(agenda)" class="card m-0">
+            <ion-card-content class="flex flex-col gap-3 p-4">
+              <div class="flex items-start justify-between">
+                <div class="flex flex-col gap-1">
+                  <h3 class="text-base font-bold" style="color: var(--app-text)">{{ agenda.tienda_nombre }}</h3>
+                  <p class="text-xs" style="color: var(--app-text-muted)">RUT: {{ agenda.tienda_rut }}</p>
+                </div>
+                <span class="badge-status"
+                  [class.badge-pending]="agenda.estado === 'PENDIENTE'"
+                  [class.badge-active]="agenda.estado === 'EN_CURSO'"
+                  [class.badge-completed]="agenda.estado === 'VALIDADA'">
+                  {{ agenda.estado }}
+                </span>
+              </div>
+
+              <div class="flex items-center gap-4 text-xs" style="color: var(--app-text-muted)">
+                <div class="flex items-center gap-1">
+                  <ion-icon name="calendar-outline"></ion-icon>
+                  <span>{{ agenda.fecha }}</span>
+                </div>
+                <div class="flex items-center gap-1">
+                  <ion-icon name="pricetag-outline"></ion-icon>
+                  <span>{{ agenda.total_tags }} TAGs</span>
+                </div>
+              </div>
+
+              <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="h-2 rounded-full" style="background: var(--app-primary)"
+                  [style.width.%]="agenda.porcentaje_avance"></div>
+              </div>
+
+              <div class="flex justify-between text-xs" style="color: var(--app-text-muted)">
+                <span>{{ agenda.tags_contados }}/{{ agenda.total_tags }} TAGs validados</span>
+                <span>{{ agenda.porcentaje_avance }}%</span>
+              </div>
+            </ion-card-content>
+          </ion-card>
+        }
+      </div>
+    }
+  </div>
+</ion-content>

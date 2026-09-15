@@ -1,0 +1,12 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+ion-content {
+  --background: linear-gradient(
+    to bottom,
+    var(--app-surface) 0%,
+    var(--app-bg) 100%
+  );
+}

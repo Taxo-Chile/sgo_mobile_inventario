@@ -1,0 +1,21 @@
+:root {
+  --ion-color-primary: #E6126A;
+  --ion-color-primary-rgb: 230, 18, 106;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #C9105C;
+  --ion-color-primary-tint: #E82B79;
+
+  --ion-color-secondary: #3F2087;
+  --ion-color-secondary-rgb: 63, 32, 135;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-contrast-rgb: 255, 255, 255;
+  --ion-color-secondary-shade: #371C77;
+  --ion-color-secondary-tint: #52348F;
+
+  --ion-color-success: #16a34a;
+  --ion-color-warning: #d97706;
+  --ion-color-danger: #dc2626;
+}
+
+@import "@ionic/angular/css/themes/palettes/dark.always.css";

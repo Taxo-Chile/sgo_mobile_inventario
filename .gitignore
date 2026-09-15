@@ -1,0 +1,40 @@
+# Compiled output
+/dist
+/tmp
+/out-tsc
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage
+lib-cov
+coverage
+
+# Dependency directories
+/node_modules
+node_modules/
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Angular
+.angular/
+.storybook/
+
+# Capacitor
+android/
+ios/
+
+# Environment
+.env
+.env.local

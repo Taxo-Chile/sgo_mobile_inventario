@@ -1,0 +1,45 @@
+import { Routes } from '@angular/router';
+import { authGuard } from './state/auth/guards/auth.guard';
+
+export const routes: Routes = [
+  {
+    path: 'login',
+    loadComponent: () =>
+      import('./features/auth/login/login.page').then((m) => m.LoginPage),
+  },
+  {
+    path: 'home',
+    loadComponent: () =>
+      import('./features/home/home.page').then((m) => m.HomePage),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'agenda/:id',
+    loadComponent: () =>
+      import('./features/agenda/agenda-detail/agenda-detail.page').then(
+        (m) => m.AgendaDetailPage
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'tag/:id',
+    loadComponent: () =>
+      import('./features/validacion/tag-detail/tag-detail.page').then(
+        (m) => m.TagDetailPage
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'tag/:tagId/capture/:capturaId',
+    loadComponent: () =>
+      import('./features/validacion/capture-validation/capture-validation.page').then(
+        (m) => m.CaptureValidationPage
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: '',
+    redirectTo: 'login',
+    pathMatch: 'full',
+  },
+];
