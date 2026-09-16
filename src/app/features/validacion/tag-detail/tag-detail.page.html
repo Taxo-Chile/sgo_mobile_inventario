@@ -1,9 +1,9 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home" text="Volver"></ion-back-button>
+      <ion-back-button [defaultHref]="'/agenda/' + agendaId" text="Volver"></ion-back-button>
     </ion-buttons>
-    <ion-title>{{ validacionTAG()?.tag?.cod_sod || 'TAG' }}</ion-title>
+    <ion-title>TAG {{ validacionTAG()?.tag?.numero_tag || '' }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -19,13 +19,13 @@
       <div class="flex flex-col gap-2">
         <div class="flex items-center gap-2">
           <span class="badge-status"
-            [class.badge-active]="validacion.tag.tipo === 'ALTILLO'"
-            [class.badge-pending]="validacion.tag.tipo === 'PDV'">
-            {{ validacion.tag.tipo }}
+            [class.badge-active]="validacion.tag.tipo_validacion === 'ALTILLO'"
+            [class.badge-pending]="validacion.tag.tipo_validacion === 'PDV'">
+            {{ validacion.tag.tipo_validacion }}
           </span>
-          <h1 class="page-title">{{ validacion.tag.cod_sod }}</h1>
+          <h1 class="page-title">TAG {{ validacion.tag.numero_tag }}</h1>
         </div>
-        <p class="page-subtitle">{{ validacion.tag.tienda_nombre }}</p>
+        <p class="page-subtitle">{{ validacion.tag.nombre_tipo }}</p>
       </div>
 
       <div class="grid grid-cols-3 gap-2">
@@ -53,7 +53,7 @@
           </div>
         } @else {
           <div class="flex flex-col gap-2">
-            @for (captura of capturas(); track captura.captura_id) {
+            @for (captura of capturas(); track captura.id_conteo_det_c1) {
               <ion-card button (click)="openCapture(captura)" class="card m-0">
                 <ion-card-content class="flex items-center justify-between p-4">
                   <div class="flex flex-col gap-1">

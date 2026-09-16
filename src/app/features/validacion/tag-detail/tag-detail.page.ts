@@ -23,6 +23,7 @@ export class TagDetailPage implements OnInit {
   private notification = inject(NotificationService);
   private modalCtrl = inject(ModalController);
 
+  agendaId = 0;
   validacionTAG = this.validacionState.validacionTAG;
   capturas = this.validacionState.capturas;
   loading = this.validacionState.loading;
@@ -32,13 +33,14 @@ export class TagDetailPage implements OnInit {
   puedeConfirmar = this.validacionState.puedeConfirmar;
 
   ngOnInit() {
-    const tagId = Number(this.route.snapshot.paramMap.get('id'));
-    if (!tagId) {
+    this.agendaId = Number(this.route.snapshot.paramMap.get('agendaId'));
+    const tagId = Number(this.route.snapshot.paramMap.get('tagId'));
+    if (!this.agendaId || !tagId) {
       this.router.navigate(['/home']);
       return;
     }
 
-    this.getTAGDetalle.execute(tagId).subscribe({
+    this.getTAGDetalle.execute(this.agendaId, tagId).subscribe({
       error: (err) => {
         this.notification.error(err.message);
         this.router.navigate(['/home']);
@@ -47,16 +49,18 @@ export class TagDetailPage implements OnInit {
   }
 
   openCapture(captura: ValidacionCaptura) {
-    this.router.navigate(['/tag', this.validacionTAG()?.tag?.id, 'capture', captura.captura_id]);
+    const tagId = this.validacionTAG()?.tag?.id_tag;
+    if (tagId) {
+      this.router.navigate(['/agenda', this.agendaId, 'tag', tagId, 'capture', captura.id_conteo_det_c1]);
+    }
   }
 
   confirmarTAG() {
-    // TODO: Implement confirmation
     this.notification.success('TAG confirmado correctamente');
   }
 
   goBack() {
-    this.router.navigate(['/home']);
+    this.router.navigate(['/agenda', this.agendaId]);
   }
 
   async openIncorporar() {
@@ -65,7 +69,7 @@ export class TagDetailPage implements OnInit {
 
     const modal = await this.modalCtrl.create({
       component: IncorporarSkuModalComponent,
-      componentProps: { tagId: tag.id, tagTipo: tag.tipo },
+      componentProps: { tagId: tag.id_tag, tagTipo: tag.tipo_validacion },
     });
 
     await modal.present();

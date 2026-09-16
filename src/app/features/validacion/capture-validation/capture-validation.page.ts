@@ -24,16 +24,20 @@ export class CaptureValidationPage implements OnInit {
   c2Cantidad = signal<number | null>(null);
   motivo = signal('');
   modo = signal<'CONFIRMAR' | 'MODIFICAR'>('CONFIRMAR');
+  agendaId = 0;
+  tagId = 0;
 
   ngOnInit() {
+    this.agendaId = Number(this.route.snapshot.paramMap.get('agendaId'));
+    this.tagId = Number(this.route.snapshot.paramMap.get('tagId'));
     const capturaId = Number(this.route.snapshot.paramMap.get('capturaId'));
-    if (!capturaId) {
+    if (!this.agendaId || !this.tagId || !capturaId) {
       this.router.navigate(['/home']);
       return;
     }
 
     const capturas = this.validacionState.capturas();
-    const found = capturas.find((c) => c.captura_id === capturaId);
+    const found = capturas.find((c) => c.id_conteo_det_c1 === capturaId);
     if (!found) {
       this.notification.error('Captura no encontrada');
       this.router.navigate(['/home']);
@@ -57,7 +61,7 @@ export class CaptureValidationPage implements OnInit {
     if (!captura) return;
 
     if (this.modo() === 'CONFIRMAR') {
-      this.validacionState.confirmarCaptura(captura.captura_id);
+      this.validacionState.confirmarCaptura(captura.id_conteo_det_c1);
       this.notification.success('Captura confirmada');
     } else {
       const cantidad = this.c2Cantidad();
@@ -69,17 +73,16 @@ export class CaptureValidationPage implements OnInit {
         this.notification.error('Ingresa un motivo de modificación');
         return;
       }
-      this.validacionState.modificarCaptura(captura.captura_id, cantidad, this.motivo().trim());
+      this.validacionState.modificarCaptura(captura.id_conteo_det_c1, cantidad, this.motivo().trim());
       this.notification.success('Captura modificada');
     }
 
-    this.router.navigate(['/tag', this.captura()?.tag_id]);
+    this.router.navigate(['/agenda', this.agendaId, 'tag', this.tagId]);
   }
 
   goBack() {
-    const tagId = this.captura()?.tag_id;
-    if (tagId) {
-      this.router.navigate(['/tag', tagId]);
+    if (this.tagId && this.agendaId) {
+      this.router.navigate(['/agenda', this.agendaId, 'tag', this.tagId]);
     } else {
       this.router.navigate(['/home']);
     }

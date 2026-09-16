@@ -30,20 +30,21 @@ export class AgendaDetailPage implements OnInit {
   tags = signal<TagResumen[]>([]);
   loading = signal(true);
   rules = signal<BusinessRuleResult | null>(null);
+  agendaId = 0;
 
   ngOnInit() {
-    const agendaId = Number(this.route.snapshot.paramMap.get('id'));
-    if (!agendaId) {
+    this.agendaId = Number(this.route.snapshot.paramMap.get('id'));
+    if (!this.agendaId) {
       this.router.navigate(['/home']);
       return;
     }
 
     const selected = this.agendaState.selectedAgenda();
-    if (selected && selected.id === agendaId) {
+    if (selected && selected.id === this.agendaId) {
       this.agenda.set(selected);
-      this.loadTags(agendaId);
+      this.loadTags(this.agendaId);
     } else {
-      this.agendaRepo.getAgendaDetalle(agendaId).subscribe({
+      this.agendaRepo.getAgendaDetalle(this.agendaId).subscribe({
         next: (detalle) => {
           this.agenda.set(detalle.agenda);
           this.agendaState.setTags(detalle.tags);
@@ -78,7 +79,7 @@ export class AgendaDetailPage implements OnInit {
       return;
     }
     this.validacionState.clear();
-    this.router.navigate(['/tag', tag.id]);
+    this.router.navigate(['/agenda', this.agendaId, 'tag', tag.id]);
   }
 
   openPreVariance() {

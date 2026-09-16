@@ -1,11 +1,12 @@
 import { Observable } from 'rxjs';
-import { TAG, ValidacionTAG, ValidacionCaptura, ValidationResult, EtapaInfo } from '../models/validacion.model';
+import { ValidacionTAG, ValidationResult, EtapaInfo, GatingResult, IncorporarSKU } from '../models/validacion.model';
 
 export abstract class ValidacionRepository {
-  abstract getTAGDetalle(tagId: number): Observable<ValidacionTAG>;
-  abstract getCapturasTAG(tagId: number): Observable<ValidacionCaptura[]>;
+  abstract getTAGDetalle(agendaId: number, tagId: number): Observable<ValidacionTAG>;
   abstract guardarValidacion(resultado: ValidationResult): Observable<void>;
-  abstract confirmarTAG(tagId: number): Observable<void>;
+  abstract confirmarTAG(agendaId: number, tagId: number): Observable<{ completado: boolean; porcentaje: number }>;
+  abstract getGating(agendaId: number): Observable<GatingResult>;
+  abstract incorporarSKU(data: IncorporarSKU): Observable<void>;
   abstract getEtapa(agendaId: number): Observable<EtapaInfo>;
   abstract validarAcceso(agendaId: number, usuarioRut: string): Observable<boolean>;
 }

@@ -10,9 +10,9 @@ export class GetTAGDetalleUseCase {
   private validacionRepo = inject<ValidacionRepository>(VALIDACION_REPOSITORY);
   private validacionState = inject(ValidacionState);
 
-  execute(tagId: number): Observable<ValidacionTAG> {
+  execute(agendaId: number, tagId: number): Observable<ValidacionTAG> {
     this.validacionState.setLoading(true);
-    return this.validacionRepo.getTAGDetalle(tagId).pipe(
+    return this.validacionRepo.getTAGDetalle(agendaId, tagId).pipe(
       tap({
         next: (validacion) => {
           this.validacionState.setValidacionTAG(validacion);

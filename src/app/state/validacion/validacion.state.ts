@@ -46,7 +46,7 @@ export class ValidacionState {
   confirmarCaptura(capturaId: number): void {
     this._capturas.update((capturas) =>
       capturas.map((c) =>
-        c.captura_id === capturaId ? { ...c, estado: 'CONFIRMADA', c2_cantidad: c.c1_cantidad } : c
+        c.id_conteo_det_c1 === capturaId ? { ...c, estado: 'CONFIRMADA', c2_cantidad: c.c1_cantidad } : c
       )
     );
   }
@@ -54,8 +54,8 @@ export class ValidacionState {
   modificarCaptura(capturaId: number, nuevaCantidad: number, motivo: string): void {
     this._capturas.update((capturas) =>
       capturas.map((c) =>
-        c.captura_id === capturaId
-          ? { ...c, estado: 'MODIFICADA', c2_cantidad: nuevaCantidad, motivo_modificacion: motivo }
+        c.id_conteo_det_c1 === capturaId
+          ? { ...c, estado: 'MODIFICADA', c2_cantidad: nuevaCantidad, motivo: motivo }
           : c
       )
     );

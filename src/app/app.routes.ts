@@ -22,7 +22,7 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
-    path: 'tag/:id',
+    path: 'agenda/:agendaId/tag/:tagId',
     loadComponent: () =>
       import('./features/validacion/tag-detail/tag-detail.page').then(
         (m) => m.TagDetailPage
@@ -30,7 +30,7 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
-    path: 'tag/:tagId/capture/:capturaId',
+    path: 'agenda/:agendaId/tag/:tagId/capture/:capturaId',
     loadComponent: () =>
       import('./features/validacion/capture-validation/capture-validation.page').then(
         (m) => m.CaptureValidationPage

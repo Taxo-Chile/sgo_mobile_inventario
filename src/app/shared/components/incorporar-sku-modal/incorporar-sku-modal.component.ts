@@ -99,16 +99,17 @@ export class IncorporarSkuModalComponent {
   incorporar() {
     const tagId = this.tagId;
     const nuevaCaptura: ValidacionCaptura = {
-      captura_id: Date.now(),
-      tag_id: tagId,
-      producto_id: Date.now(),
+      id_conteo_det_c1: Date.now(),
+      id_producto: Date.now(),
       producto_nombre: this.nombre(),
       producto_sku: this.sku(),
       c1_cantidad: 0,
       c2_cantidad: this.cantidad(),
       unidad_medida: this.unidadMedida(),
       estado: 'MODIFICADA',
-      motivo_modificacion: `Incorporado: ${this.motivo()}`,
+      motivo: `Incorporado: ${this.motivo()}`,
+      login_operador: 'incorporar',
+      fecha_captura: new Date().toISOString(),
     };
 
     this.modalCtrl.dismiss(nuevaCaptura);

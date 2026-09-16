@@ -150,60 +150,69 @@ export class MockDataService {
 
   private readonly mockCapturas: ValidacionCaptura[] = [
     {
-      captura_id: 1,
-      tag_id: 2,
-      producto_id: 101,
+      id_conteo_det_c1: 1,
+      id_producto: 101,
       producto_nombre: 'Pintura Vinícola Blanca 20L',
       producto_sku: 'PINT-20L-BLA',
       c1_cantidad: 15,
       c2_cantidad: null,
       unidad_medida: 'UN',
       estado: 'PENDIENTE',
+      motivo: null,
+      login_operador: 'auditor01',
+      fecha_captura: '2026-09-15 10:00:00',
     },
     {
-      captura_id: 2,
-      tag_id: 2,
-      producto_id: 102,
+      id_conteo_det_c1: 2,
+      id_producto: 102,
       producto_nombre: 'Cemento gris 25kg',
       producto_sku: 'CEM-25K-GRIS',
       c1_cantidad: 48,
       c2_cantidad: null,
       unidad_medida: 'BLS',
       estado: 'PENDIENTE',
+      motivo: null,
+      login_operador: 'auditor01',
+      fecha_captura: '2026-09-15 10:05:00',
     },
     {
-      captura_id: 3,
-      tag_id: 2,
-      producto_id: 103,
+      id_conteo_det_c1: 3,
+      id_producto: 103,
       producto_nombre: 'Tubo PVC 4" x 6m',
       producto_sku: 'TUB-4P-6M',
       c1_cantidad: 32,
       c2_cantidad: null,
       unidad_medida: 'UN',
       estado: 'PENDIENTE',
+      motivo: null,
+      login_operador: 'auditor01',
+      fecha_captura: '2026-09-15 10:10:00',
     },
     {
-      captura_id: 4,
-      tag_id: 2,
-      producto_id: 104,
+      id_conteo_det_c1: 4,
+      id_producto: 104,
       producto_nombre: 'Lámina至于 1.20m x 2.40m',
       producto_sku: 'LAM-120-240',
       c1_cantidad: 25,
       c2_cantidad: 27,
       unidad_medida: 'UN',
       estado: 'MODIFICADA',
-      motivo_modificacion: 'Diferencia de stock',
+      motivo: 'Diferencia de stock',
+      login_operador: 'auditor01',
+      fecha_captura: '2026-09-15 10:15:00',
     },
     {
-      captura_id: 5,
-      tag_id: 2,
-      producto_id: 105,
+      id_conteo_det_c1: 5,
+      id_producto: 105,
       producto_nombre: 'Malla electrosoldada 1.80m',
       producto_sku: 'MAL-180-ES',
       c1_cantidad: 18,
       c2_cantidad: 18,
       unidad_medida: 'UN',
       estado: 'CONFIRMADA',
+      motivo: null,
+      login_operador: 'auditor01',
+      fecha_captura: '2026-09-15 10:20:00',
     },
   ];
 
@@ -225,26 +234,25 @@ export class MockDataService {
     return of({ agenda, tags }).pipe(delay(500));
   }
 
-  getTAGDetalle(tagId: number): Observable<ValidacionTAG> {
-    const tag = this.mockTags.find((t) => t.id === tagId) || this.mockTags[0];
-    const capturas = this.mockCapturas.filter((c) => c.tag_id === tagId);
+  getTAGDetalle(agendaId: number, tagId: number): Observable<ValidacionTAG> {
+    const capturas = this.mockCapturas;
 
     return of({
       tag: {
-        id: tag.id,
-        cod_sod: tag.cod_sod,
-        tienda_id: tag.tienda_id,
-        tienda_nombre: tag.tienda_nombre,
-        tipo: tag.tipo,
-        estado: tag.estado,
-        productos_total: tag.total_productos,
-        productos_contados: tag.total_contados,
-        validacion_estado: tag.validacion_estado || 'PENDIENTE',
+        id_tag: tagId,
+        numero_tag: 2,
+        id_tipo_ubicacion: 1,
+        estado_tag: 'EN_CURSO',
+        codigo_tipo: 'ALT',
+        nombre_tipo: 'Altillo',
+        tipo_validacion: 'ALTILLO' as const,
       },
-      capturas: capturas.length > 0 ? capturas : this.mockCapturas.slice(0, 3),
+      capturas: capturas,
       total_pendientes: capturas.filter((c) => c.estado === 'PENDIENTE').length,
       total_confirmadas: capturas.filter((c) => c.estado === 'CONFIRMADA').length,
       total_modificadas: capturas.filter((c) => c.estado === 'MODIFICADA').length,
+      id_conteo_c1: 1,
+      id_conteo_c2: null,
     }).pipe(delay(600));
   }
 }
