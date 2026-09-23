@@ -4,6 +4,9 @@
       <ion-back-button defaultHref="/home" text="Volver"></ion-back-button>
     </ion-buttons>
     <ion-title>Recuento (C3)</ion-title>
+    @if (preview) {
+      <ion-badge slot="end" color="warning" class="preview-badge">MODO PRUEBAS</ion-badge>
+    }
   </ion-toolbar>
 </ion-header>
 
@@ -15,24 +18,41 @@
       <div class="flex justify-center py-8">
         <ion-spinner name="crescent"></ion-spinner>
       </div>
-    } @else if (recuento(); as rec) {
+    } @else if (productos().length > 0) {
+      @if (estaFinalizado()) {
+        <div class="p-3 rounded-lg mb-4" style="background: var(--app-success-bg); border: 1px solid var(--app-success-border);">
+          <div class="flex items-center gap-2">
+            <ion-icon name="checkmark-circle" style="color: var(--app-success)"></ion-icon>
+            <span class="text-sm font-semibold" style="color: var(--app-success)">Recuento Finalizado</span>
+          </div>
+          <p class="text-xs mt-1" style="color: var(--app-success)">
+            El recuento ha sido cerrado. Vista de solo lectura.
+          </p>
+        </div>
+      }
+
       <div class="flex flex-col gap-2">
         <div class="flex items-center gap-2">
-          <span class="badge-status"
-            [class.badge-active]="rec.estado === 'FINALIZADO'"
-            [class.badge-pending]="rec.estado === 'PENDIENTE'">
-            {{ rec.estado }}
-          </span>
-          <h1 class="page-title">Recuento #{{ rec.id }}</h1>
+          @if (recuento(); as rec) {
+            <span class="badge-status"
+              [class.badge-active]="rec.estado === 'FINALIZADO'"
+              [class.badge-pending]="rec.estado === 'PENDIENTE'">
+              {{ rec.estado }}
+            </span>
+            <h1 class="page-title">Recuento #{{ rec.id }}</h1>
+          } @else {
+            <span class="badge-status badge-pending">SIN INICIAR</span>
+            <h1 class="page-title">Recuento (C3)</h1>
+          }
         </div>
-        <p class="page-subtitle">{{ rec.tienda_nombre }}</p>
+        <p class="page-subtitle">{{ productos()[0]?.producto_nombre ? 'Productos disponibles' : '' }}</p>
       </div>
 
       <div class="card p-4 mb-4">
         <div class="flex items-center justify-between">
-          <span class="text-sm" style="color: var(--app-text-muted)">Monto Total Diferencia</span>
+          <span class="text-sm" style="color: var(--app-text-muted)">Productos para Recuento</span>
           <span class="text-lg font-bold" style="color: var(--app-primary)">
-            {{ montoTotalDiferencia() | currency:'CLP':'symbol':'1.0-0' }}
+            {{ productos().length }}
           </span>
         </div>
       </div>
@@ -43,81 +63,98 @@
           <span class="text-[10px]" style="color: var(--app-text-muted)">Pendientes</span>
         </div>
         <div class="card p-3 flex flex-col items-center gap-1">
-          <span class="text-lg font-bold" style="color: var(--app-success)">{{ totalConfirmados() }}</span>
-          <span class="text-[10px]" style="color: var(--app-text-muted)">Confirmados</span>
+          <span class="text-lg font-bold" style="color: var(--app-warning)">{{ totalParciales() }}</span>
+          <span class="text-[10px]" style="color: var(--app-text-muted)">Parciales</span>
         </div>
         <div class="card p-3 flex flex-col items-center gap-1">
-          <span class="text-lg font-bold" style="color: var(--app-warning)">{{ totalModificados() }}</span>
-          <span class="text-[10px]" style="color: var(--app-text-muted)">Modificados</span>
+          <span class="text-lg font-bold" style="color: var(--app-success)">{{ totalRecontados() }}</span>
+          <span class="text-[10px]" style="color: var(--app-text-muted)">Recontados</span>
         </div>
       </div>
 
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-2 mb-6">
         <h2 class="text-sm font-semibold" style="color: var(--app-text)">Productos para Recuento</h2>
 
-        @if (productos().length === 0) {
-          <div class="flex flex-col items-center py-8 gap-4">
-            <ion-icon name="checkmark-circle-outline" class="text-5xl" style="color: var(--app-success)"></ion-icon>
-            <p class="text-center text-sm" style="color: var(--app-text-muted)">No hay productos para recuento</p>
-          </div>
-        } @else {
-          <div class="flex flex-col gap-2">
-            @for (producto of productos(); track producto.id) {
-              <ion-card class="card m-0">
-                <ion-card-content class="flex flex-col gap-3 p-4">
-                  <div class="flex items-center justify-between">
-                    <div class="flex flex-col gap-1">
-                      <span class="text-sm font-bold" style="color: var(--app-text)">{{ producto.producto_nombre }}</span>
-                      <span class="text-xs" style="color: var(--app-text-muted)">SKU: {{ producto.producto_sku }}</span>
-                    </div>
-                    <span class="text-sm font-bold" style="color: var(--app-primary)">
-                      {{ producto.diferencia_monto | currency:'CLP':'symbol':'1.0-0' }}
-                    </span>
+        <div class="flex flex-col gap-2">
+          @for (producto of productos(); track producto.id) {
+            <ion-card class="card m-0">
+              <ion-card-content class="flex flex-col gap-3 p-4">
+                <div class="flex items-center justify-between">
+                  <div class="flex flex-col gap-1">
+                    <span class="text-sm font-bold" style="color: var(--app-text)">{{ producto.producto_nombre }}</span>
+                    <span class="text-xs" style="color: var(--app-text-muted)">SKU: {{ producto.producto_sku }}</span>
                   </div>
+                  <ion-badge
+                    [color]="producto.estado === 'RECONTADO' ? 'success' : producto.estado === 'PARCIAL' ? 'warning' : 'medium'">
+                    {{ producto.estado }}
+                  </ion-badge>
+                </div>
 
-                  <div class="flex items-center justify-between text-xs" style="color: var(--app-text-muted)">
-                    <span>C1: {{ producto.cantidad_c1 }}</span>
-                    <span>C2: {{ producto.cantidad_c2 }}</span>
-                    @if (producto.cantidad_c3 !== null) {
-                      <span class="font-bold" style="color: var(--app-primary)">C3: {{ producto.cantidad_c3 }}</span>
+                <div class="flex items-center justify-between text-xs" style="color: var(--app-text-muted)">
+                  <span>C1: {{ producto.cantidad_c1 | number:'1.0-3' }}</span>
+                  <span>C2: {{ producto.cantidad_c2 | number:'1.0-3' }}</span>
+                  @if (producto.cantidad_c3 !== null) {
+                    <span class="font-bold" style="color: var(--app-primary)">C3: {{ producto.cantidad_c3 | number:'1.0-3' }}</span>
+                  }
+                  <span>Tags: {{ producto.tags_recontados }}/{{ producto.tags_total }}</span>
+                </div>
+
+                @if (!estaFinalizado() && producto.cantidad_c3 === null) {
+                  <div class="flex gap-2">
+                    <ion-button class="btn-primary btn-success" size="small" (click)="confirmarProducto(producto)">
+                      <ion-icon name="checkmark-outline" slot="start"></ion-icon>
+                      Confirmar C2
+                    </ion-button>
+                    <ion-button class="btn-primary btn-warning" size="small" (click)="modificarProducto(producto)">
+                      <ion-icon name="create-outline" slot="start"></ion-icon>
+                      Modificar
+                    </ion-button>
+                  </div>
+                } @else {
+                  <div class="flex items-center gap-2">
+                    @if (producto.accion === 'CONFIRMADO' || (producto.cantidad_c3 !== null && !producto.accion)) {
+                      <ion-icon name="checkmark-circle" class="text-xl" style="color: var(--app-success)"></ion-icon>
+                      <span class="text-xs font-bold" style="color: var(--app-success)">Confirmado</span>
+                    } @else if (producto.accion === 'MODIFICADO') {
+                      <ion-icon name="create-circle" class="text-xl" style="color: var(--app-warning)"></ion-icon>
+                      <span class="text-xs font-bold" style="color: var(--app-warning)">Modificado</span>
                     }
                   </div>
-
-                  @if (producto.estado === 'PENDIENTE') {
-                    <div class="flex gap-2">
-                      <ion-button class="btn-primary btn-success" size="small" (click)="confirmarProducto(producto)">
-                        <ion-icon name="checkmark-outline" slot="start"></ion-icon>
-                        Confirmar C2
-                      </ion-button>
-                      <ion-button class="btn-primary btn-warning" size="small" (click)="modificarProducto(producto)">
-                        <ion-icon name="create-outline" slot="start"></ion-icon>
-                        Modificar
-                      </ion-button>
-                    </div>
-                  } @else {
-                    <div class="flex items-center gap-2">
-                      @if (producto.estado === 'CONFIRMADO') {
-                        <ion-icon name="checkmark-circle" class="text-xl" style="color: var(--app-success)"></ion-icon>
-                        <span class="text-xs font-bold" style="color: var(--app-success)">Confirmado</span>
-                      } @else {
-                        <ion-icon name="create-circle" class="text-xl" style="color: var(--app-warning)"></ion-icon>
-                        <span class="text-xs font-bold" style="color: var(--app-warning)">Modificado</span>
-                      }
-                    </div>
-                  }
-                </ion-card-content>
-              </ion-card>
-            }
-          </div>
-        }
+                }
+              </ion-card-content>
+            </ion-card>
+          }
+        </div>
       </div>
 
-      @if (puedeFinalizar()) {
-        <ion-button class="btn-primary btn-success" expand="block" (click)="finalizarRecuento()">
-          <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
-          Finalizar Recuento
-        </ion-button>
+      @if (!previewLoading && preview) {
+        <div class="card p-4 mb-4 preview-card">
+          <div class="flex items-center gap-2 mb-3">
+            <ion-icon name="flask-outline" class="text-xl" style="color: var(--app-warning)"></ion-icon>
+            <h3 class="text-sm font-bold" style="color: var(--app-warning)">MODO PRUEBAS - Vista Preliminar</h3>
+          </div>
+          <div class="grid grid-cols-3 gap-2 mb-3">
+            <div class="flex flex-col items-center">
+              <span class="text-lg font-bold" style="color: var(--app-success)">{{ preview.total_recontados }}</span>
+              <span class="text-[10px]" style="color: var(--app-text-muted)">Recontados</span>
+            </div>
+            <div class="flex flex-col items-center">
+              <span class="text-lg font-bold" style="color: var(--app-text-muted)">{{ preview.total_pendientes }}</span>
+              <span class="text-[10px]" style="color: var(--app-text-muted)">Pendientes</span>
+            </div>
+            <div class="flex flex-col items-center">
+              <span class="text-lg font-bold" style="color: var(--app-danger)">{{ preview.total_con_diferencia }}</span>
+              <span class="text-[10px]" style="color: var(--app-text-muted)">Con Diferencia</span>
+            </div>
+          </div>
+          <p class="text-xs" style="color: var(--app-text-muted)">
+            Reapertura: {{ preview.reapertura.motivo }}<br>
+            Abierto por: {{ preview.reapertura.login_apertura }}<br>
+            Fecha corte: {{ preview.fecha_corte }}
+          </p>
+        </div>
       }
+
     } @else {
       <div class="flex flex-col items-center py-8 gap-4">
         <ion-icon name="calculator-outline" class="text-5xl" style="color: var(--app-text-muted)"></ion-icon>
@@ -127,3 +164,12 @@
     }
   </div>
 </ion-content>
+
+<div class="bottom-actions">
+  @if (!loading() && productos().length > 0 && !estaFinalizado() && puedeFinalizar()) {
+    <ion-button class="btn-primary btn-success" expand="block" (click)="finalizarRecuento()">
+      <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+      Finalizar Recuento
+    </ion-button>
+  }
+</div>

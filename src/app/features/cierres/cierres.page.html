@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home" text="Volver"></ion-back-button>
+      <ion-back-button [defaultHref]="'/agenda/' + agendaId" text="Volver"></ion-back-button>
     </ion-buttons>
     <ion-title>Cierres</ion-title>
   </ion-toolbar>
@@ -16,76 +16,154 @@
         <ion-spinner name="crescent"></ion-spinner>
       </div>
     } @else {
-      <div class="flex flex-col gap-2">
-        <h1 class="page-title">Cierres de Agenda</h1>
-        <p class="page-subtitle">Gestión de cierres por tipo</p>
+      <div class="flex flex-col gap-2 mb-4">
+        <h1 class="page-title">Estado de Cierres</h1>
+        <p class="page-subtitle">Agenda #{{ agendaId }}</p>
       </div>
 
-      <div class="grid grid-cols-2 gap-2 mb-4">
-        <div class="card p-3 flex flex-col items-center gap-1">
-          <span class="text-lg font-bold" style="color: var(--app-text-muted)">{{ cierresPendientes() }}</span>
-          <span class="text-[10px]" style="color: var(--app-text-muted)">Pendientes</span>
-        </div>
-        <div class="card p-3 flex flex-col items-center gap-1">
-          <span class="text-lg font-bold" style="color: var(--app-success)">{{ cierresCompletados() }}</span>
-          <span class="text-[10px]" style="color: var(--app-text-muted)">Completados</span>
-        </div>
-      </div>
-
-      <div class="flex flex-col gap-2">
-        <h2 class="text-sm font-semibold" style="color: var(--app-text)">Tipos de Cierre</h2>
-
-        @if (cierres().length === 0) {
-          <div class="flex flex-col items-center py-8 gap-4">
-            <ion-icon name="document-outline" class="text-5xl" style="color: var(--app-text-muted)"></ion-icon>
-            <p class="text-center text-sm" style="color: var(--app-text-muted)">No hay cierres disponibles</p>
+      <!-- Pre-Variance -->
+      @if (preVariance(); as pv) {
+        <div class="card p-4 mb-3">
+          <div class="flex items-center gap-3 mb-3">
+            <ion-icon name="analytics-outline" class="text-2xl"
+              [style.color]="'var(--app-' + getEstadoColor(pv.estado) + ')'">
+            </ion-icon>
+            <div class="flex flex-col gap-1 flex-1">
+              <span class="text-sm font-bold" style="color: var(--app-text)">Pre Variance</span>
+              <span class="text-xs" style="color: var(--app-text-muted)">
+                {{ pv.estadoLabel }}
+              </span>
+            </div>
+            <span class="badge-status" [class.badge-active]="pv.estado === 'CERRADO' || pv.estado === 'ENVIADO'">
+              {{ pv.estadoLabel }}
+            </span>
           </div>
-        } @else {
-          <div class="flex flex-col gap-2">
-            @for (cierre of cierres(); track cierre.id) {
-              <ion-card class="card m-0">
-                <ion-card-content class="flex items-center justify-between p-4">
-                  <div class="flex items-center gap-3">
-                    <ion-icon [name]="getTipoIcon(cierre.tipo_cierre)" class="text-2xl"
-                      [style.color]="cierre.estado === 'COMPLETADO' ? 'var(--app-success)' : 'var(--app-text-muted)'">
-                    </ion-icon>
-                    <div class="flex flex-col gap-1">
-                      <span class="text-sm font-bold" style="color: var(--app-text)">{{ getTipoLabel(cierre.tipo_cierre) }}</span>
-                      <span class="text-xs" style="color: var(--app-text-muted)">
-                        {{ cierre.productos_validados }}/{{ cierre.productos_total }} productos
-                      </span>
-                    </div>
-                  </div>
-
-                  <div class="flex items-center gap-3">
-                    @if (cierre.monto_diferencia > 0) {
-                      <span class="text-xs font-bold" style="color: var(--app-primary)">
-                        {{ cierre.monto_diferencia | currency:'CLP':'symbol':'1.0-0' }}
-                      </span>
-                    }
-
-                    @if (cierre.estado === 'COMPLETADO') {
-                      <span class="badge-status badge-active">COMPLETADO</span>
-                    } @else {
-                      <ion-button class="btn-primary btn-success" size="small" (click)="cerrarCierre(cierre)">
-                        <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
-                        Cerrar
-                      </ion-button>
-                    }
-                  </div>
-                </ion-card-content>
-              </ion-card>
-            }
+          @if (pv.fecha) {
+            <div class="text-xs" style="color: var(--app-text-muted)">
+              Cerrado: {{ pv.fecha | date:'dd-MM-yyyy HH:mm' }}
+            </div>
+          }
+          @if (pv.observaciones) {
+            <div class="text-xs mt-1" style="color: var(--app-text-muted)">
+              {{ pv.observaciones }}
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="card p-4 mb-3" style="opacity: 0.6;">
+          <div class="flex items-center gap-3">
+            <ion-icon name="analytics-outline" class="text-2xl" style="color: var(--app-text-muted)"></ion-icon>
+            <div class="flex flex-col gap-1 flex-1">
+              <span class="text-sm font-bold" style="color: var(--app-text-muted)">Pre Variance</span>
+              <span class="text-xs" style="color: var(--app-text-muted)">Sin datos</span>
+            </div>
           </div>
-        }
-      </div>
+        </div>
+      }
 
-      @if (puedeCerrarFinal()) {
-        <div class="mt-4">
-          <ion-button class="btn-primary btn-success" expand="block" (click)="cerrarCierre(cierres()[cierres().length - 1])">
-            <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
-            Cerrar Agenda Finalmente
-          </ion-button>
+      <!-- Recuento -->
+      @if (recuento(); as rc) {
+        <div class="card p-4 mb-3">
+          <div class="flex items-center gap-3 mb-3">
+            <ion-icon name="calculator-outline" class="text-2xl"
+              [style.color]="'var(--app-' + getEstadoColor(rc.estado) + ')'">
+            </ion-icon>
+            <div class="flex flex-col gap-1 flex-1">
+              <span class="text-sm font-bold" style="color: var(--app-text)">Recuento</span>
+              <span class="text-xs" style="color: var(--app-text-muted)">
+                {{ rc.estadoLabel }}
+              </span>
+            </div>
+            <span class="badge-status" [class.badge-active]="rc.estado === 'CERRADO' || rc.estado === 'ENVIADO'">
+              {{ rc.estadoLabel }}
+            </span>
+          </div>
+          @if (rc.fecha) {
+            <div class="text-xs" style="color: var(--app-text-muted)">
+              Cerrado: {{ rc.fecha | date:'dd-MM-yyyy HH:mm' }}
+            </div>
+          }
+          @if (rc.observaciones) {
+            <div class="text-xs mt-1" style="color: var(--app-text-muted)">
+              {{ rc.observaciones }}
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="card p-4 mb-3" style="opacity: 0.6;">
+          <div class="flex items-center gap-3">
+            <ion-icon name="calculator-outline" class="text-2xl" style="color: var(--app-text-muted)"></ion-icon>
+            <div class="flex flex-col gap-1 flex-1">
+              <span class="text-sm font-bold" style="color: var(--app-text-muted)">Recuento</span>
+              <span class="text-xs" style="color: var(--app-text-muted)">Sin datos</span>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Cierre Final -->
+      @if (snapshot().existe) {
+        <div class="card p-4 mb-3">
+          <div class="flex items-center gap-3 mb-3">
+            <ion-icon name="lock-closed-outline" class="text-2xl" style="color: var(--app-success)"></ion-icon>
+            <div class="flex flex-col gap-1 flex-1">
+              <span class="text-sm font-bold" style="color: var(--app-text)">Cierre Final</span>
+              <span class="text-xs" style="color: var(--app-success)">Snapshot Inmutable</span>
+            </div>
+            <span class="badge-status badge-active">CERRADO</span>
+          </div>
+
+          @if (snapshot().codigo) {
+            <div class="text-xs mb-2" style="color: var(--app-text-muted)">
+              Codigo: <span class="font-bold">{{ snapshot().codigo }}</span>
+            </div>
+          }
+
+          <div class="grid grid-cols-2 gap-2 text-xs mb-3" style="color: var(--app-text-muted)">
+            <span>Stock teorico:</span>
+            <span class="text-right font-bold">{{ snapshot().stockUnidades | number:'1.0-0' }} un.</span>
+            <span>Stock fisico:</span>
+            <span class="text-right font-bold">{{ snapshot().fisicoUnidades | number:'1.0-0' }} un.</span>
+            <span>Diferencia:</span>
+            <span class="text-right font-bold"
+              [style.color]="snapshot().diferenciaUnidades != 0 ? 'var(--app-danger)' : 'var(--app-success)'">
+              {{ snapshot().diferenciaUnidades | number:'1.0-0' }} un.
+            </span>
+            <span>Valor stock:</span>
+            <span class="text-right">{{ snapshot().stockValor | currency:'CLP':'symbol':'1.0-0' }}</span>
+            <span>Valor fisico:</span>
+            <span class="text-right">{{ snapshot().fisicoValor | currency:'CLP':'symbol':'1.0-0' }}</span>
+            <span>Dif. valor:</span>
+            <span class="text-right font-bold"
+              [style.color]="snapshot().diferenciaValor != 0 ? 'var(--app-danger)' : 'var(--app-success)'">
+              {{ snapshot().diferenciaValor | currency:'CLP':'symbol':'1.0-0' }}
+            </span>
+          </div>
+
+          <div class="flex gap-2">
+            <ion-button class="btn-primary" size="small" (click)="downloadPdf()">
+              <ion-icon name="document-outline" slot="start"></ion-icon>
+              PDF
+            </ion-button>
+            <ion-button class="btn-primary btn-success" size="small" (click)="downloadExcel()">
+              <ion-icon name="grid-outline" slot="start"></ion-icon>
+              Excel
+            </ion-button>
+            <ion-button class="btn-primary" color="warning" size="small" (click)="downloadZip()">
+              <ion-icon name="archive-outline" slot="start"></ion-icon>
+              ZIP
+            </ion-button>
+          </div>
+        </div>
+      } @else {
+        <div class="card p-4 mb-3" style="opacity: 0.6;">
+          <div class="flex items-center gap-3">
+            <ion-icon name="lock-closed-outline" class="text-2xl" style="color: var(--app-text-muted)"></ion-icon>
+            <div class="flex flex-col gap-1 flex-1">
+              <span class="text-sm font-bold" style="color: var(--app-text-muted)">Cierre Final</span>
+              <span class="text-xs" style="color: var(--app-text-muted)">Pendiente de cierre por encargado</span>
+            </div>
+          </div>
         </div>
       }
     }

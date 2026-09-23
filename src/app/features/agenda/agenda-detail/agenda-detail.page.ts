@@ -1,6 +1,7 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ViewWillEnter } from '@ionic/angular';
+import { DatePipe } from '@angular/common';
 import { AGENDA_REPOSITORY } from '../../../core/tokens/repository.tokens';
 import { AgendaRepository } from '../../../domain/agenda/repositories/agenda.repository';
 import { AgendaState } from '../../../state/agenda/agenda.state';
@@ -13,11 +14,11 @@ import { BusinessRulesService, BusinessRuleResult } from '../../../shared/servic
 @Component({
   selector: 'app-agenda-detail',
   standalone: true,
-  imports: [IonicModule, ConnectivityBannerComponent],
+  imports: [IonicModule, ConnectivityBannerComponent, DatePipe],
   templateUrl: './agenda-detail.page.html',
   styleUrls: ['./agenda-detail.page.scss'],
 })
-export class AgendaDetailPage implements OnInit {
+export class AgendaDetailPage implements ViewWillEnter {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private agendaRepo = inject<AgendaRepository>(AGENDA_REPOSITORY);
@@ -32,43 +33,26 @@ export class AgendaDetailPage implements OnInit {
   rules = signal<BusinessRuleResult | null>(null);
   agendaId = 0;
 
-  ngOnInit() {
+  ionViewWillEnter() {
     this.agendaId = Number(this.route.snapshot.paramMap.get('id'));
     if (!this.agendaId) {
       this.router.navigate(['/home']);
       return;
     }
 
-    const selected = this.agendaState.selectedAgenda();
-    if (selected && selected.id === this.agendaId) {
-      this.agenda.set(selected);
-      this.loadTags(this.agendaId);
-    } else {
-      this.agendaRepo.getAgendaDetalle(this.agendaId).subscribe({
-        next: (detalle) => {
-          this.agenda.set(detalle.agenda);
-          this.agendaState.setTags(detalle.tags);
-          this.tags.set(detalle.tags);
-          this.loading.set(false);
-        },
-        error: () => {
-          this.loading.set(false);
-          this.notification.error('Error al cargar agenda');
-        },
-      });
-    }
-  }
+    this.loading.set(true);
 
-  private loadTags(agendaId: number) {
-    this.agendaRepo.getTagsPorAgenda(agendaId).subscribe({
-      next: (tags) => {
-        this.agendaState.setTags(tags);
-        this.tags.set(tags);
-        this.rules.set(this.businessRules.evaluar(tags));
+    this.agendaRepo.getAgendaDetalle(this.agendaId).subscribe({
+      next: (detalle) => {
+        this.agenda.set(detalle.agenda);
+        this.agendaState.setTags(detalle.tags);
+        this.tags.set(detalle.tags);
+        this.rules.set(this.businessRules.evaluar(detalle.tags));
         this.loading.set(false);
       },
       error: () => {
         this.loading.set(false);
+        this.notification.error('Error al cargar agenda');
       },
     });
   }
@@ -98,6 +82,18 @@ export class AgendaDetailPage implements OnInit {
     const agenda = this.agenda();
     if (!agenda) return;
     this.router.navigate(['/cierres', agenda.id]);
+  }
+
+  openZonificacion() {
+    const agenda = this.agenda();
+    if (!agenda) return;
+    this.router.navigate(['/zonificacion', agenda.id]);
+  }
+
+  openInformes() {
+    const agenda = this.agenda();
+    if (!agenda) return;
+    this.router.navigate(['/informes', agenda.id]);
   }
 
   goBack() {

@@ -6,3 +6,28 @@
 ion-content {
   --background: var(--app-bg);
 }
+
+.filter-item {
+  --background: var(--app-surface);
+  --min-height: 44px;
+  --padding-start: 10px;
+  --padding-end: 10px;
+  border-radius: 10px;
+  flex: 1;
+  font-size: 0.75rem;
+
+  ion-label {
+    margin-right: 3px;
+  }
+}
+
+.date-filter {
+  --color: var(--app-text);
+  font-size: 0.75rem;
+  max-width: 130px;
+}
+
+.tienda-filter {
+  --color: var(--app-text);
+  font-size: 0.75rem;
+}

@@ -16,6 +16,18 @@
         <ion-spinner name="crescent"></ion-spinner>
       </div>
     } @else if (preVariance(); as pv) {
+      @if (estaFinalizado()) {
+        <div class="p-3 rounded-lg mb-4" style="background: var(--app-success-bg); border: 1px solid var(--app-success-border);">
+          <div class="flex items-center gap-2">
+            <ion-icon name="checkmark-circle" style="color: var(--app-success)"></ion-icon>
+            <span class="text-sm font-semibold" style="color: var(--app-success)">Pre Variance Finalizado</span>
+          </div>
+          <p class="text-xs mt-1" style="color: var(--app-success)">
+            Validación completada el {{ fechaCierre() | date:'dd-MM-yyyy HH:mm' }}
+          </p>
+        </div>
+      }
+
       <div class="flex flex-col gap-2">
         <div class="flex items-center gap-2">
           <span class="badge-status"
@@ -23,7 +35,7 @@
             [class.badge-pending]="pv.estado === 'PENDIENTE'">
             {{ pv.estado }}
           </span>
-          <h1 class="page-title">Pre Variance #{{ pv.id }}</h1>
+          <h1 class="page-title">Pre Variance #{{ pv.id_conteo }}</h1>
         </div>
         <p class="page-subtitle">{{ pv.tienda_nombre }}</p>
       </div>
@@ -44,7 +56,7 @@
         </div>
         <div class="card p-3 flex flex-col items-center gap-1">
           <span class="text-lg font-bold" style="color: var(--app-success)">{{ totalAprobados() }}</span>
-          <span class="text-[10px]" style="color: var(--app-text-muted)">Aprobados</span>
+          <span class="text-[10px]" style=" var(--app-text-muted)">Aprobados</span>
         </div>
         <div class="card p-3 flex flex-col items-center gap-1">
           <span class="text-lg font-bold" style="color: var(--app-danger)">{{ totalRechazados() }}</span>
@@ -76,12 +88,12 @@
                   </div>
 
                   <div class="flex items-center justify-between text-xs" style="color: var(--app-text-muted)">
-                    <span>C1: {{ producto.cantidad_c1 }}</span>
-                    <span>C2: {{ producto.cantidad_c2 }}</span>
-                    <span>Diferencia: {{ producto.diferencia }}</span>
+                    <span>C1: {{ producto.cantidad_c1 | number:'1.0-3' }}</span>
+                    <span>C2: {{ producto.cantidad_c2 | number:'1.0-3' }}</span>
+                    <span>Diferencia: {{ producto.diferencia | number:'1.0-3' }}</span>
                   </div>
 
-                  @if (producto.estado === 'PENDIENTE') {
+                  @if (!estaFinalizado() && producto.estado === 'PENDIENTE') {
                     <div class="flex gap-2">
                       <ion-button class="btn-primary btn-success" size="small" (click)="aprobarProducto(producto)">
                         <ion-icon name="checkmark-outline" slot="start"></ion-icon>
@@ -110,11 +122,18 @@
         }
       </div>
 
-      @if (puedeFinalizar()) {
-        <ion-button class="btn-primary btn-success" expand="block" (click)="finalizarValidacion()">
-          <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
-          Finalizar Validación
-        </ion-button>
+      @if (!estaFinalizado()) {
+        @if (puedeFinalizar() && !guardando()) {
+          <ion-button class="btn-primary btn-success" expand="block" (click)="confirmarFinalizacion()">
+            <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+            Finalizar Validación
+          </ion-button>
+        } @else if (guardando()) {
+          <ion-button class="btn-primary" expand="block" disabled>
+            <ion-spinner name="crescent" slot="start"></ion-spinner>
+            Guardando...
+          </ion-button>
+        }
       }
     } @else {
       <div class="flex flex-col items-center py-8 gap-4">

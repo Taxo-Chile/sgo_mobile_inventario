@@ -5,7 +5,9 @@ import { FormsModule } from '@angular/forms';
 import { ValidacionState } from '../../../state/validacion/validacion.state';
 import { NotificationService } from '../../../shared/services/notification.service';
 import { ConnectivityBannerComponent } from '../../../shared/components/connectivity-banner/connectivity-banner.component';
-import { ValidacionCaptura } from '../../../domain/validacion/models/validacion.model';
+import { ValidacionCaptura, ValidationResult } from '../../../domain/validacion/models/validacion.model';
+import { VALIDACION_REPOSITORY } from '../../../core/tokens/repository.tokens';
+import { ValidacionRepository } from '../../../domain/validacion/repositories/validacion.repository';
 
 @Component({
   selector: 'app-capture-validation',
@@ -19,6 +21,7 @@ export class CaptureValidationPage implements OnInit {
   private router = inject(Router);
   private validacionState = inject(ValidacionState);
   private notification = inject(NotificationService);
+  private validacionRepo = inject<ValidacionRepository>(VALIDACION_REPOSITORY);
 
   captura = signal<ValidacionCaptura | null>(null);
   c2Cantidad = signal<number | null>(null);
@@ -45,7 +48,10 @@ export class CaptureValidationPage implements OnInit {
     }
 
     this.captura.set(found);
-    this.c2Cantidad.set(found.c1_cantidad);
+    this.c2Cantidad.set(found.c2_cantidad ?? found.c1_cantidad);
+    if (found.estado === 'MODIFICADA' || found.estado === 'CONFIRMADA') {
+      this.modo.set(found.estado === 'MODIFICADA' ? 'MODIFICAR' : 'CONFIRMAR');
+    }
   }
 
   setModo(modo: 'CONFIRMAR' | 'MODIFICAR') {
@@ -53,6 +59,8 @@ export class CaptureValidationPage implements OnInit {
     if (modo === 'CONFIRMAR') {
       this.c2Cantidad.set(this.captura()?.c1_cantidad ?? null);
       this.motivo.set('');
+    } else {
+      this.c2Cantidad.set(this.captura()?.c2_cantidad ?? this.captura()?.c1_cantidad ?? null);
     }
   }
 
@@ -62,7 +70,6 @@ export class CaptureValidationPage implements OnInit {
 
     if (this.modo() === 'CONFIRMAR') {
       this.validacionState.confirmarCaptura(captura.id_conteo_det_c1);
-      this.notification.success('Captura confirmada');
     } else {
       const cantidad = this.c2Cantidad();
       if (cantidad === null || cantidad < 0) {
@@ -74,10 +81,31 @@ export class CaptureValidationPage implements OnInit {
         return;
       }
       this.validacionState.modificarCaptura(captura.id_conteo_det_c1, cantidad, this.motivo().trim());
-      this.notification.success('Captura modificada');
     }
 
-    this.router.navigate(['/agenda', this.agendaId, 'tag', this.tagId]);
+    const allCapturas = this.validacionState.capturas();
+    const resultado: ValidationResult = {
+      agenda_id: this.agendaId,
+      tag_id: this.tagId,
+      login: 'APP_TABLET',
+      capturas: allCapturas.map((c) => ({
+        id_conteo_det_c1: c.id_conteo_det_c1,
+        id_producto: c.id_producto,
+        decision: c.estado === 'MODIFICADA' ? 'MODIFICAR' as const : 'CONFIRMAR' as const,
+        c2_cantidad: c.c2_cantidad ?? undefined,
+        motivo: c.motivo ?? undefined,
+      })),
+    };
+
+    this.validacionRepo.guardarValidacion(resultado).subscribe({
+      next: () => {
+        this.notification.success(this.modo() === 'CONFIRMAR' ? 'Captura confirmada' : 'Captura modificada');
+        this.router.navigate(['/agenda', this.agendaId, 'tag', this.tagId]);
+      },
+      error: (err) => {
+        this.notification.error(err?.message || 'Error al guardar. Intente nuevamente.');
+      },
+    });
   }
 
   goBack() {

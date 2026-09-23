@@ -1,0 +1,197 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home" text="Volver"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Validacion Zonificacion</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <app-connectivity-banner />
+  
+  <div class="page-inner">
+    @if (loading()) {
+      <div class="loading-container">
+        <ion-spinner name="crescent"></ion-spinner>
+        <p>Cargando zonificacion...</p>
+      </div>
+    } @else if (error()) {
+      <div class="error-container">
+        <ion-icon name="alert-circle-outline" color="danger"></ion-icon>
+        <p>{{ error() }}</p>
+        <ion-button (click)="goBack()">Volver</ion-button>
+      </div>
+    } @else if (agenda(); as ag) {
+      <!-- Header de la tienda -->
+      <div class="card p-4 mb-4">
+        <div class="flex items-center gap-3 mb-2">
+          <ion-icon name="storefront-outline" class="text-2xl" style="color: var(--app-primary)"></ion-icon>
+          <div>
+            <h2 class="page-title">{{ ag.nombre_tienda }}</h2>
+            <p class="page-subtitle">{{ ag.codigo_tienda }} - {{ ag.numero_agenda }}</p>
+          </div>
+        </div>
+        <div class="flex gap-4 text-sm">
+          <span>Fecha: {{ ag.fecha | date:'dd-MM-yyyy' }}</span>
+          <span class="badge-status badge-active">{{ ag.estado }}</span>
+        </div>
+      </div>
+
+      <!-- KPIs -->
+      @if (kpi(); as k) {
+        <div class="card p-4 mb-4">
+          <h3 class="font-semibold mb-3" style="color: var(--app-text)">Resumen de la validacion</h3>
+          <div class="grid grid-cols-3 gap-2 mb-3">
+            <div class="kpi-card">
+              <span class="kpi-value">{{ k.tag_planificados }}</span>
+              <span class="kpi-label">Planificados</span>
+            </div>
+            <div class="kpi-card">
+              <span class="kpi-value" style="color: var(--app-success)">{{ k.tag_validados }}</span>
+              <span class="kpi-label">Validados</span>
+            </div>
+            <div class="kpi-card">
+              <span class="kpi-value" style="color: var(--app-warning)">{{ k.pendientes }}</span>
+              <span class="kpi-label">Pendientes</span>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div class="kpi-card">
+              <span class="kpi-value" style="color: var(--app-danger)">{{ k.fuera_zonificacion }}</span>
+              <span class="kpi-label">Fuera zonificacion</span>
+            </div>
+            <div class="kpi-card">
+              <span class="kpi-value" [style.color]="k.porcentaje_cobertura >= 100 ? 'var(--app-success)' : 'var(--app-warning)'">
+                {{ k.porcentaje_cobertura | number:'1.0-0' }}%
+              </span>
+              <span class="kpi-label">Cobertura</span>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Botones de exportacion -->
+      <div class="flex gap-2 mb-4">
+        <button class="btn-action flex-1" (click)="downloadExcel()">
+          <ion-icon name="document-text-outline"></ion-icon>
+          <span>Descargar Excel</span>
+        </button>
+        <button class="btn-action-secondary flex-1" (click)="downloadPdf()">
+          <ion-icon name="print-outline"></ion-icon>
+          <span>Imprimir / PDF</span>
+        </button>
+      </div>
+
+      <!-- Regla de negocio -->
+      <div class="card p-3 mb-4" style="background: var(--app-info-bg); border-left: 4px solid var(--app-info)">
+        <p class="text-xs" style="color: var(--app-text)">
+          <strong>Regla:</strong> un TAG valida la Zonificacion cuando su numero se encuentra dentro del rango formal configurado para la agenda. El tipo operativo del TAG no bloquea la coincidencia.
+        </p>
+      </div>
+
+      <!-- Detalle de zonas -->
+      @if (zonas(); as zns) {
+        <div class="card p-4 mb-4">
+          <h3 class="font-semibold mb-3" style="color: var(--app-text)">Detalle zonas validadas</h3>
+          <div class="overflow-x-auto">
+            <table class="zonas-table">
+              <thead>
+                <tr>
+                  <th>Desde</th>
+                  <th>Hasta</th>
+                  <th>Descripcion</th>
+                  <th>Plan.</th>
+                  <th>Val.</th>
+                  <th>Pend.</th>
+                  <th>%</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (zona of zns; track zona.id_zonificacion_det) {
+                  <tr>
+                    <td>{{ zona.tag_desde }}</td>
+                    <td>{{ zona.tag_hasta }}</td>
+                    <td>{{ zona.descripcion }}</td>
+                    <td>{{ zona.qty_zonificado }}</td>
+                    <td style="color: var(--app-success)">{{ zona.tag_validados }}</td>
+                    <td [style.color]="zona.pendientes > 0 ? 'var(--app-warning)' : 'inherit'">
+                      {{ zona.pendientes }}
+                    </td>
+                    <td>
+                      <span class="badge-status" [class.badge-active]="zona.porcentaje_cobertura >= 100" [class.badge-pending]="zona.porcentaje_cobertura < 100">
+                        {{ zona.porcentaje_cobertura | number:'1.0-0' }}%
+                      </span>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+              <tfoot>
+                <tr class="font-bold">
+                  <td colspan="3">TOTALES</td>
+                  <td>{{ kpi()?.tag_planificados }}</td>
+                  <td style="color: var(--app-success)">{{ kpi()?.tag_validados }}</td>
+                  <td [style.color]="tienePendientes() ? 'var(--app-warning)' : 'inherit'">
+                    {{ kpi()?.pendientes }}
+                  </td>
+                  <td>
+                    <span class="badge-status" [class.badge-active]="(kpi()?.porcentaje_cobertura ?? 0) >= 100" [class.badge-pending]="(kpi()?.porcentaje_cobertura ?? 0) < 100">
+                      {{ kpi()?.porcentaje_cobertura | number:'1.0-0' }}%
+                    </span>
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      }
+
+      <!-- TAGs fuera de zonificacion -->
+      @if (tagsFueraZona(); as tagsFuera) {
+        @if (tagsFuera.length > 0) {
+          <div class="card p-4 mb-4" style="border-left: 4px solid var(--app-danger)">
+            <h3 class="font-semibold mb-3" style="color: var(--app-danger)">
+              TAG fuera de Zonificacion ({{ tagsFuera.length }})
+            </h3>
+            @for (tag of tagsFuera; track tag.numero_tag) {
+              <div class="tag-fuera-card">
+                <div class="flex justify-between items-center mb-2">
+                  <span class="font-bold">TAG {{ tag.numero_tag }}</span>
+                  <span class="badge-status badge-pending">{{ tag.zona }}</span>
+                </div>
+                <div class="text-xs" style="color: var(--app-text-secondary)">
+                  <p>{{ tag.sku_distintos }} SKU distintos | {{ tag.capturas }} capturas</p>
+                  @if (tag.productos.length > 0) {
+                    <p class="mt-1">
+                      @for (prod of tag.productos; track prod) {
+                        <span class="inline-block mr-2">{{ prod }}</span>
+                      }
+                      @if (tag.productos_total > 4) {
+                        <span class="text-muted">+{{ tag.productos_total - 4 }} SKU mas</span>
+                      }
+                    </p>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        }
+      }
+
+      <!-- Observaciones -->
+      @if (observaciones(); as obs) {
+        <div class="card p-4 mb-4">
+          <h3 class="font-semibold mb-3" style="color: var(--app-text)">Observaciones</h3>
+          @for (mensaje of obs; track mensaje) {
+            <p class="text-sm" style="color: var(--app-text-secondary)">{{ mensaje }}</p>
+          }
+        </div>
+      }
+
+      <!-- Footer -->
+      <div class="text-center text-xs pb-4" style="color: var(--app-text-secondary)">
+        Agenda {{ ag.numero_agenda }} | Generado: {{ ag.fecha }}
+      </div>
+    }
+  </div>
+</ion-content>

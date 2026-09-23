@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { from, Observable, catchError, of } from 'rxjs';
+import { from, Observable, catchError, of, map } from 'rxjs';
 import { HttpClient } from '../../core/http/http-client';
-import { ValidacionRepository } from '../../domain/validacion/repositories/validacion.repository';
+import { ValidacionRepository, TagOperationResult, ProductoBuscado } from '../../domain/validacion/repositories/validacion.repository';
 import { ValidacionTAG, ValidationResult, EtapaInfo, GatingResult, IncorporarSKU } from '../../domain/validacion/models/validacion.model';
 import { MockDataService } from '../../shared/services/mock-data.service';
 
@@ -23,12 +23,9 @@ export class ValidacionApiRepository implements ValidacionRepository {
 
   guardarValidacion(resultado: ValidationResult): Observable<void> {
     return from(this.http.post<void>('tablet/validacion/guardar.php', resultado)).pipe(
-      catchError(() => {
-        console.log('API no disponible, validación mockup guardada');
-        return new Observable<void>((subscriber) => {
-          subscriber.next();
-          subscriber.complete();
-        });
+      catchError((err) => {
+        console.error('Error guardando validación:', err);
+        throw err;
       })
     );
   }
@@ -54,13 +51,22 @@ export class ValidacionApiRepository implements ValidacionRepository {
 
   incorporarSKU(data: IncorporarSKU): Observable<void> {
     return from(this.http.post<void>('tablet/validacion/incorporar.php', data)).pipe(
-      catchError(() => {
-        console.log('API no disponible, incorporación mockup');
-        return new Observable<void>((subscriber) => {
-          subscriber.next();
-          subscriber.complete();
-        });
+      catchError((err) => {
+        console.error('Error incorporando SKU:', err);
+        throw err;
       })
+    );
+  }
+
+  buscarProductos(agendaId: number, query: string): Observable<ProductoBuscado[]> {
+    return from(this.http.get<{ productos: ProductoBuscado[] }>(
+      `tablet/productos/buscar.php?agenda_id=${agendaId}&q=${encodeURIComponent(query)}`
+    )).pipe(
+      catchError(() => {
+        console.log('API no disponible, búsqueda mockup');
+        return of({ productos: [] });
+      }),
+      map((res) => res.productos || [])
     );
   }
 
@@ -76,6 +82,34 @@ export class ValidacionApiRepository implements ValidacionRepository {
   validarAcceso(agendaId: number, usuarioRut: string): Observable<boolean> {
     return from(this.http.get<boolean>(`tablet/validar-acceso.php?agenda_id=${agendaId}&rut=${usuarioRut}`)).pipe(
       catchError(() => of(true))
+    );
+  }
+
+  reactivarTAG(tagId: number): Observable<TagOperationResult> {
+    return from(this.http.post<TagOperationResult>('tablet/tags/reactivar.php', { tag_id: tagId })).pipe(
+      catchError((err) => { throw err; })
+    );
+  }
+
+  anularTAG(tagId: number): Observable<TagOperationResult> {
+    return from(this.http.post<TagOperationResult>('tablet/tags/anular.php', { tag_id: tagId })).pipe(
+      catchError((err) => { throw err; })
+    );
+  }
+
+  cerrarTAG(tagId: number): Observable<TagOperationResult> {
+    return from(this.http.post<TagOperationResult>('tablet/tags/cerrar.php', { tag_id: tagId })).pipe(
+      catchError((err) => { throw err; })
+    );
+  }
+
+  crearTAG(agendaId: number, numeroTag: number, idTipoUbicacion: number): Observable<TagOperationResult & { descripcion_zona: string }> {
+    return from(this.http.post<TagOperationResult & { descripcion_zona: string }>('tablet/tags/crear.php', {
+      agenda_id: agendaId,
+      numero_tag: numeroTag,
+      id_tipo_ubicacion: idTipoUbicacion,
+    })).pipe(
+      catchError((err) => { throw err; })
     );
   }
 }

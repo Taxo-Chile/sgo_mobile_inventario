@@ -62,8 +62,28 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: 'zonificacion/:id',
+    loadComponent: () =>
+      import('./features/zonificacion/zonificacion.page').then(
+        (m) => m.ZonificacionPage
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'informes/:id',
+    loadComponent: () =>
+      import('./features/informes/informes.page').then(
+        (m) => m.InformesPage
+      ),
+    canActivate: [authGuard],
+  },
+  {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full',
+  },
+  {
+    path: '**',
+    redirectTo: 'login',
   },
 ];

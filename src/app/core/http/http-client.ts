@@ -56,7 +56,9 @@ export class HttpClient {
     const data: ApiResponse<T> = await response.json();
 
     if (!response.ok || data.status === 'ERROR') {
-      throw new Error(data.msg || 'Error en la solicitud');
+      const error: any = new Error(data.msg || 'Error en la solicitud');
+      error.status = response.status;
+      throw error;
     }
 
     return data.data as T;

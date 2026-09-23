@@ -11,7 +11,7 @@
     "build": "ng build",
     "build:dev": "ng build --configuration=development",
     "test": "ng test",
-    "test:ci": "ng test --configuration=ci",
+    "test:ci": "ng test --configuration=ci --browsers=ChromeHeadless --watch=false",
     "lint": "ng lint"
   },
   "private": true,

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { ConnectivityBannerComponent } from './shared/components/connectivity-banner/connectivity-banner.component';
+import './shared/icons';
 
 @Component({
   selector: 'app-root',

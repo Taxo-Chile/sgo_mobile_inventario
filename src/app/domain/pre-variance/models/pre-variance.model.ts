@@ -1,24 +1,21 @@
 export interface PreVarianceProducto {
   id: number;
-  pre_variance_id: number;
-  tag_id: number;
-  producto_id: number;
+  id_tag: number;
+  id_producto: number;
   producto_nombre: string;
   producto_sku: string;
+  precio_unitario: number;
+  numero_tag: number;
   cantidad_c1: number;
   cantidad_c2: number;
   diferencia: number;
-  precio_unitario: number;
   diferencia_monto: number;
-  unidad_medida: string;
   estado: 'PENDIENTE' | 'APROBADO' | 'RECHAZADO';
   motivo?: string;
-  validado_por?: string;
-  validado_at?: string;
 }
 
 export interface PreVariance {
-  id: number;
+  id_conteo: number;
   agenda_id: number;
   tag_id: number;
   tienda_id: number;
@@ -42,4 +39,12 @@ export interface PreVarianceResumen {
   total_rechazados: number;
   monto_total_aprobado: number;
   monto_total_rechazado: number;
+}
+
+export interface PreVarianceDetalleResponse {
+  pre_variances: PreVariance[];
+  productos: PreVarianceProducto[];
+  total_diferencias: number;
+  estado_cierre: string;
+  fecha_cierre: string | null;
 }

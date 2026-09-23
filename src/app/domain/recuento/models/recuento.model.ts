@@ -5,14 +5,26 @@ export interface RecuentoProducto {
   producto_id: number;
   producto_nombre: string;
   producto_sku: string;
+  numero_tag: number;
   cantidad_c1: number;
   cantidad_c2: number;
-  cantidad_c3: number;
+  cantidad_c3: number | null;
+  cantidad_prevariance: number;
+  base_quantity: number;
+  base_origen: string;
   diferencia_c2_c3: number;
   precio_unitario: number;
   diferencia_monto: number;
   unidad_medida: string;
-  estado: 'PENDIENTE' | 'CONFIRMADO' | 'MODIFICADO';
+  /** Cobertura de tags (servidor): PENDIENTE / PARCIAL / RECONTADO */
+  estado: 'PENDIENTE' | 'PARCIAL' | 'RECONTADO';
+  /** Acción local de captura hasta que se recarga del servidor */
+  accion?: 'CONFIRMADO' | 'MODIFICADO';
+  tags_total: number;
+  tags_recontados: number;
+  stock_teorico?: number;
+  valor_unitario?: number;
+  dif_inicial_valor?: number;
   motivo_modificacion?: string;
   capturista_rut: string;
   capturista_nombre?: string;
@@ -39,7 +51,18 @@ export interface RecuentoResumen {
   recuento: Recuento;
   productos: RecuentoProducto[];
   total_pendientes: number;
-  total_confirmados: number;
-  total_modificados: number;
+  total_parciales: number;
+  total_recontados: number;
   monto_total_diferencia: number;
+}
+
+export interface RecuentoDetalleResponse {
+  recuentos: Recuento[];
+  productos: RecuentoProducto[];
+  total_pendientes: number;
+  total_parciales: number;
+  total_recontados: number;
+  estado_cierre: string;
+  umbral?: number;
+  snapshot_universo_completo?: boolean;
 }

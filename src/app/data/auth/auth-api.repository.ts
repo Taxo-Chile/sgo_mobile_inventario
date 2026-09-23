@@ -15,9 +15,17 @@ export class AuthApiRepository implements AuthRepository {
   login(credentials: LoginRequest): Observable<User> {
     return from(this.http.post<{ user: User }>('auth/login.php', credentials)).pipe(
       map((res) => res.user),
-      catchError(() => {
-        console.log('API no disponible, usando datos mockup');
-        return this.mockData.login();
+      catchError((err) => {
+        // Solo fallback a mock en errores de red o servidor (sin status o 5xx)
+        // Los 4xx (401 credenciales invalidas, 400 validacion) se propagan como error
+        const isNetworkError = !err.status;
+        const isServerError = err.status >= 500;
+        if (isNetworkError || isServerError) {
+          console.log('API no disponible, usando datos mockup');
+          return this.mockData.login();
+        }
+        // Error de negocio (401, 400, etc.) - propagar al componente
+        throw err;
       })
     );
   }

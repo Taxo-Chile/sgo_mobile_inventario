@@ -46,7 +46,7 @@
       <ion-button
         class="btn-primary"
         type="button"
-        [disabled]="loading()"
+        [disabled]="loading() || !rut() || !password()"
         (click)="onLogin()"
       >
         @if (loading()) {

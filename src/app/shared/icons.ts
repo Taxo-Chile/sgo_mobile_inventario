@@ -1,0 +1,38 @@
+import { addIcons } from 'ionicons';
+import {
+  analyticsOutline,
+  calculatorOutline,
+  lockClosedOutline,
+  mapOutline,
+  chevronForwardOutline,
+  checkmarkCircleOutline,
+  alertCircleOutline,
+  storefrontOutline,
+  calendarOutline,
+  pricetagOutline,
+  homeOutline,
+  statsChartOutline,
+  settingsOutline,
+  moonOutline,
+  sunnyOutline,
+  logOutOutline,
+} from 'ionicons/icons';
+
+addIcons({
+  'analytics-outline': analyticsOutline,
+  'calculator-outline': calculatorOutline,
+  'lock-closed-outline': lockClosedOutline,
+  'map-outline': mapOutline,
+  'chevron-forward': chevronForwardOutline,
+  'checkmark-circle': checkmarkCircleOutline,
+  'alert-circle-outline': alertCircleOutline,
+  'storefront-outline': storefrontOutline,
+  'calendar-outline': calendarOutline,
+  'pricetag-outline': pricetagOutline,
+  'home-outline': homeOutline,
+  'stats-chart-outline': statsChartOutline,
+  'settings-outline': settingsOutline,
+  'moon-outline': moonOutline,
+  'sunny-outline': sunnyOutline,
+  'log-out-outline': logOutOutline,
+});

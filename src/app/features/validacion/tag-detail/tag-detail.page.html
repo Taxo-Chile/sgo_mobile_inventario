@@ -16,19 +16,56 @@
         <ion-spinner name="crescent"></ion-spinner>
       </div>
     } @else if (validacionTAG(); as validacion) {
-      <div class="flex flex-col gap-2">
+      <!-- Header del TAG -->
+      <div class="flex flex-col gap-2 mb-3">
         <div class="flex items-center gap-2">
           <span class="badge-status"
             [class.badge-active]="validacion.tag.tipo_validacion === 'ALTILLO'"
-            [class.badge-pending]="validacion.tag.tipo_validacion === 'PDV'">
+            [class.badge-pending]="validacion.tag.tipo_validacion === 'PDV'"
+            [class.badge-info]="validacion.tag.tipo_validacion === 'OTRO'">
             {{ validacion.tag.tipo_validacion }}
           </span>
           <h1 class="page-title">TAG {{ validacion.tag.numero_tag }}</h1>
         </div>
         <p class="page-subtitle">{{ validacion.tag.nombre_tipo }}</p>
+        <div class="flex items-center gap-2">
+          <span class="badge-status"
+            [class.badge-active]="validacion.tag.estado_tag === 'ABIERTO'"
+            [class.badge-danger]="validacion.tag.estado_tag === 'ANULADO'"
+            [class.badge-info]="validacion.tag.estado_tag === 'FINALIZADO'">
+            {{ validacion.tag.estado_tag }}
+          </span>
+        </div>
       </div>
 
-      <div class="grid grid-cols-3 gap-2">
+      <!-- Botones de accion segun estado -->
+      @if (esFinalizado()) {
+        <div class="flex items-center gap-2 mb-4" style="background: #e8f5e9; padding: 12px; border-radius: 8px;">
+          <ion-icon name="checkmark-circle" style="color: var(--app-success); font-size: 20px;"></ion-icon>
+          <span class="text-sm font-bold" style="color: var(--app-success)">TAG FINALIZADO - Solo lectura</span>
+        </div>
+      } @else if (esAnulado()) {
+        <div class="flex gap-2 mb-4">
+          <ion-button class="btn-primary flex-1" (click)="confirmarReactivar()">
+            <ion-icon name="refresh-outline" slot="start"></ion-icon>
+            Reactivar TAG
+          </ion-button>
+        </div>
+      } @else {
+        <div class="flex gap-2 mb-4">
+          <ion-button fill="outline" color="medium" class="flex-1" (click)="confirmarAnular()">
+            <ion-icon name="trash-outline" slot="start"></ion-icon>
+            Anular TAG
+          </ion-button>
+          <ion-button fill="outline" color="medium" class="flex-1" (click)="abrirCrearTAG()">
+            <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+            Crear TAG
+          </ion-button>
+        </div>
+      }
+
+      <!-- KPIs -->
+      <div class="grid grid-cols-3 gap-2 mb-4">
         <div class="card p-3 flex flex-col items-center gap-1">
           <span class="text-lg font-bold" style="color: var(--app-text-muted)">{{ totalPendientes() }}</span>
           <span class="text-[10px]" style="color: var(--app-text-muted)">Pendientes</span>
@@ -43,6 +80,7 @@
         </div>
       </div>
 
+      <!-- Capturas -->
       <div class="flex flex-col gap-2">
         <h2 class="text-sm font-semibold" style="color: var(--app-text)">Capturas a Validar</h2>
 
@@ -54,7 +92,7 @@
         } @else {
           <div class="flex flex-col gap-2">
             @for (captura of capturas(); track captura.id_conteo_det_c1) {
-              <ion-card button (click)="openCapture(captura)" class="card m-0">
+              <ion-card [button]="!esFinalizado()" (click)="!esFinalizado() && openCapture(captura)" class="card m-0" [style.opacity]="esFinalizado() ? 0.7 : 1">
                 <ion-card-content class="flex items-center justify-between p-4">
                   <div class="flex flex-col gap-1">
                     <span class="text-sm font-bold" style="color: var(--app-text)">{{ captura.producto_nombre }}</span>
@@ -85,17 +123,21 @@
         }
       </div>
 
-      @if (puedeConfirmar()) {
-        <ion-button class="btn-primary btn-success" (click)="confirmarTAG()">
-          <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
-          Confirmar TAG Completo
-        </ion-button>
-      }
-
-      <ion-button class="btn-primary" expand="block" (click)="openIncorporar()">
-        <ion-icon name="add-circle-outline" slot="start"></ion-icon>
-        Incorporar SKU
-      </ion-button>
     }
   </div>
 </ion-content>
+
+<div class="bottom-actions">
+  @if (!esFinalizado() && !esAnulado()) {
+    @if (puedeConfirmar()) {
+      <ion-button class="btn-primary btn-success" expand="block" (click)="confirmarTAG()">
+        <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+        Confirmar TAG Completo
+      </ion-button>
+    }
+    <ion-button class="btn-primary" expand="block" (click)="openIncorporar()">
+      <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+      Incorporar SKU
+    </ion-button>
+  }
+</div>

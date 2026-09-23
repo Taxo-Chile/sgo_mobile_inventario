@@ -33,12 +33,12 @@ export class BusinessRulesService {
 
     const altillosActivos = activos.filter((t) => t.tipo === 'ALTILLO');
     const altillosValidados = altillosActivos.filter(
-      (t) => t.validacion_estado === 'VALIDADO' && t.estado === 'FINALIZADO'
+      (t) => t.estado === 'FINALIZADO'
     );
 
     const pdvActivos = activos.filter((t) => t.tipo === 'PDV');
     const pdvValidados = pdvActivos.filter(
-      (t) => t.validacion_estado === 'VALIDADO' && t.estado === 'FINALIZADO'
+      (t) => t.estado === 'FINALIZADO'
     );
 
     const altillosObjetivo = altillosActivos.length;

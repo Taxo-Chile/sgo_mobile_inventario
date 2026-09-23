@@ -27,7 +27,8 @@ export class ValidacionState {
 
   readonly puedeConfirmar = computed(() => {
     const etapa = this._etapa();
-    return etapa?.permite_validacion && this.totalPendientes() === 0;
+    const permite = etapa ? etapa.permite_validacion : true;
+    return permite && this.totalPendientes() === 0;
   });
 
   setValidacionTAG(validacion: ValidacionTAG): void {

@@ -1,3 +1,9 @@
+/*
+ * App Global CSS — SGO Inventario
+ * Basado en el design system de sodimac, optimizado para Samsung SM-X133 (8.7", 800x1340, 179ppi)
+ */
+
+/* Tipografía de marca — autohospedada, funciona 100% offline (sin CDN) */
 @import "@fontsource/sora/400.css";
 @import "@fontsource/sora/700.css";
 @import "@fontsource/sora/800.css";
@@ -6,7 +12,7 @@
 @import "@fontsource/inter/600.css";
 @import "@fontsource/inter/700.css";
 
-h1, h2, h3, .page-title {
+h1, h2, h3, .page-title, .sync-title {
   font-family: 'Sora', var(--ion-font-family);
   letter-spacing: -0.02em;
 }
@@ -15,6 +21,7 @@ h1, h2, h3, .page-title {
 @tailwind components;
 @tailwind utilities;
 
+/* Core CSS required for Ionic components */
 @import "@ionic/angular/css/core.css";
 @import "@ionic/angular/css/normalize.css";
 @import "@ionic/angular/css/structure.css";
@@ -28,36 +35,11 @@ h1, h2, h3, .page-title {
 
 @import "@ionic/angular/css/palettes/dark.class.css";
 
-:root {
-  --app-primary: #E6126A;
-  --app-primary-hover: #C9105C;
-  --app-primary-active: #B00E50;
-  --app-accent: #3F2087;
-  --app-text: #1a1a2e;
-  --app-text-muted: #6b7280;
-  --app-surface: #ffffff;
-  --app-surface-hover: #f9fafb;
-  --app-bg: #f5f5f7;
-  --app-border: #e5e7eb;
-  --app-border-focus: #E6126A;
-  --app-focus-ring: rgba(230, 18, 106, 0.2);
-  --app-placeholder: #9ca3af;
-  --app-menu-bg: #3F2087;
-  --app-menu-border: rgba(255, 255, 255, 0.1);
-  --app-error: #dc2626;
-  --app-error-surface: #fef2f2;
-  --app-error-border: #fecaca;
-  --app-error-text: #991b1b;
-  --app-success: #16a34a;
-  --app-success-bg: #f0fdf4;
-  --app-success-border: #bbf7d0;
-  --app-warning: #d97706;
-  --app-warning-bg: #fffbeb;
-  --app-warning-border: #fde68a;
-}
-
+/* ===================================================================
+   App bar — barra plana con borde de 1px, como el canvas
+   =================================================================== */
 ion-header ion-toolbar {
-  --min-height: 64px;
+  --min-height: 56px;
   --border-width: 0 0 1px 0;
   --border-style: solid;
 }
@@ -72,28 +54,40 @@ ion-header {
 
 ion-title {
   font-family: 'Sora', var(--ion-font-family);
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   letter-spacing: -0.01em;
 }
 
+/* ===================================================================
+   Tailwind component classes — design system tokens (tablet-optimized)
+   Basado en el canvas de diseño Safin360 · Control de Inventario:
+   superficies planas, bordes de 1px, radios de 16px, controles de
+   60px, etiquetas micro en monoespaciada y numerales tabulares.
+   =================================================================== */
 @layer components {
+
+  /* ---------- LAYOUT (Samsung SM-X133: 800px, 179ppi) ---------- */
   .page-inner {
     @apply flex flex-col;
-    @apply max-w-[960px] mx-auto px-8;
-    @apply gap-6;
+    @apply w-full mx-auto px-4 py-3;
+    @apply gap-4;
   }
 
   .page-title {
-    @apply text-3xl font-extrabold leading-tight;
+    @apply text-2xl font-extrabold leading-tight;
     color: var(--app-text);
   }
 
   .page-subtitle {
-    @apply text-base leading-relaxed;
+    @apply text-sm leading-relaxed;
     color: var(--app-text-muted);
   }
 
+  /*
+   * Etiqueta micro en monoespaciada — el recurso tipográfico que ordena
+   * el canvas: campos, secciones y encabezados de bloque.
+   */
   .field-label {
     @apply block text-[12px] font-medium uppercase;
     font-family: theme('fontFamily.mono');
@@ -101,24 +95,138 @@ ion-title {
     color: var(--app-text-muted);
   }
 
+  .section-label {
+    @apply block text-[12px] font-medium uppercase mb-3;
+    font-family: theme('fontFamily.mono');
+    letter-spacing: 0.08em;
+    color: var(--app-text-muted);
+  }
+
+  /* Numerales: códigos, cantidades, fechas y totales */
+  .num {
+    font-family: theme('fontFamily.mono');
+    @apply tabular-nums;
+  }
+
+  /* ---------- BUTTONS (Samsung SM-X133: 48px min touch target) ---------- */
+  .btn-primary {
+    --background: var(--app-primary);
+    --background-hover: var(--app-primary-hover);
+    --background-activated: var(--app-primary-active);
+    --background-disabled: var(--app-surface);
+    --border-radius: 14px;
+    --box-shadow: 0 8px 24px -8px rgba(230, 18, 106, 0.45);
+    --color: #ffffff;
+    --opacity-disabled: 1;
+    --padding-start: 1.25rem;
+    --padding-end: 1.25rem;
+
+    @apply w-full text-[15px] font-semibold normal-case tracking-normal;
+    @apply transition-transform duration-150;
+    min-height: 56px;
+    text-transform: none;
+
+    &:not([disabled]):active {
+      transform: scale(0.98);
+    }
+
+    &[disabled] {
+      --box-shadow: none;
+      opacity: 0.4;
+    }
+  }
+
+  /* Variante morada — acciones de cierre/finalización */
+  .btn-accent {
+    --background: var(--app-accent);
+    --background-hover: var(--app-accent);
+    --background-activated: var(--app-accent);
+    --background-disabled: var(--app-surface);
+    --border-radius: 14px;
+    --box-shadow: 0 8px 24px -8px rgba(63, 32, 135, 0.45);
+    --color: #ffffff;
+    --opacity-disabled: 1;
+    --padding-start: 1.25rem;
+    --padding-end: 1.25rem;
+
+    @apply w-full text-[15px] font-semibold;
+    @apply transition-transform duration-150;
+    min-height: 56px;
+    text-transform: none;
+
+    &:not([disabled]):active {
+      transform: scale(0.98);
+    }
+
+    &[disabled] {
+      --box-shadow: none;
+      opacity: 0.4;
+    }
+  }
+
+  /* Variante contorno — acción secundaria sobre superficie */
+  .btn-outline {
+    --background: var(--app-surface);
+    --background-hover: var(--app-surface-hover);
+    --border-radius: 14px;
+    --box-shadow: 0 1px 2px rgba(27, 31, 36, 0.06);
+    --color: var(--app-text);
+    --padding-start: 1.25rem;
+    --padding-end: 1.25rem;
+
+    @apply w-full text-[15px] font-semibold;
+    min-height: 56px;
+    text-transform: none;
+    border: 1px solid var(--app-border);
+    border-radius: 14px;
+
+    &:not([disabled]):active {
+      transform: scale(0.98);
+    }
+  }
+
+  .btn-ghost {
+    --background: transparent;
+    --background-hover: var(--app-surface-hover);
+    --color: var(--app-primary);
+    --border-radius: 14px;
+    --padding-start: 0.75rem;
+    --padding-end: 0.75rem;
+
+    @apply w-full min-h-[48px] text-[14px] font-semibold;
+    text-transform: none;
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+
+  /* ---------- INPUTS (Samsung SM-X133: 56px height for touch) ---------- */
   .input-base {
     color: var(--app-text) !important;
     --background: var(--app-surface);
-    --border-radius: 16px;
+    --border-radius: 14px;
     --border-color: var(--app-border);
     --border-style: solid;
     --border-width: 1px;
     --highlight-color-focused: var(--app-primary);
     --placeholder-color: var(--app-placeholder);
     --color: var(--app-text);
-    --padding-start: 1rem;
-    --padding-end: 1rem;
-    --padding-top: 16px;
-    --padding-bottom: 16px;
+    --padding-start: 0.875rem;
+    --padding-end: 0.875rem;
+    --padding-top: 14px;
+    --padding-bottom: 14px;
 
-    @apply w-full text-[16px] transition-shadow duration-200;
-    min-height: 60px;
+    @apply w-full text-[15px] transition-shadow duration-200;
+    min-height: 56px;
+
     border-radius: var(--border-radius);
+
+    ion-icon[slot='start'] {
+      color: var(--app-text-muted);
+      margin-inline-end: 0.625rem;
+      font-size: 1.1rem;
+    }
 
     &:focus-within {
       --border-color: var(--app-border-focus);
@@ -126,115 +234,98 @@ ion-title {
     }
   }
 
+  /*
+   * Sin la barra inferior del modo Material: es un subrayado recto de 2px que
+   * no sigue el radio, choca con el input redondeado y encima se pinta verde o
+   * roja según la validación, algo que acá ya se comunica con el texto de error
+   * bajo el campo.
+   */
   ion-input.input-base {
     --highlight-height: 0;
     --highlight-color-valid: var(--app-border);
     --highlight-color-invalid: var(--app-border);
   }
 
-  .btn-primary {
-    --background: var(--app-primary);
-    --background-hover: var(--app-primary-hover);
-    --background-activated: var(--app-primary-active);
-    --background-disabled: var(--app-surface);
-    --border-radius: 16px;
-    --box-shadow: 0 8px 24px -8px rgba(230, 18, 106, 0.45);
-    --color: #ffffff;
-    --opacity-disabled: 1;
-    --padding-start: 1.5rem;
-    --padding-end: 1.5rem;
-
-    @apply w-full text-[16px] font-semibold normal-case tracking-normal;
-    @apply transition-transform duration-150;
-    min-height: 60px;
-    text-transform: none;
-
-    &:not([disabled]):active {
-      transform: scale(0.98);
-    }
-
-    &[disabled] {
-      --box-shadow: none;
-      opacity: 0.4;
-    }
+  /* ---------- CARDS (Samsung SM-X133) ---------- */
+  .card {
+    @apply rounded-xl p-3 border transition-all duration-200;
+    background: var(--app-surface);
+    border-color: var(--app-border);
+    box-shadow: 0 1px 2px rgba(27, 31, 36, 0.04);
   }
 
-  .btn-action {
-    --border-radius: 12px;
-    --padding-start: 1.5rem;
-    --padding-end: 1.5rem;
-    --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-
-    @apply w-full text-[16px] font-semibold;
-    min-height: 60px;
-    text-transform: none;
-    transition: transform 0.15s ease, opacity 0.15s ease;
-
-    &:not([disabled]):active {
-      transform: scale(0.98);
-    }
-
-    &[disabled] {
-      --box-shadow: none;
-      opacity: 0.4;
-    }
-  }
-
-  .btn-success {
-    --background: var(--app-success);
-    --background-hover: var(--app-success);
-    --color: #ffffff;
-  }
-
-  .btn-danger {
-    --background: var(--app-error);
-    --background-hover: var(--app-error);
-    --color: #ffffff;
-  }
-
-  .btn-outline {
-    --background: transparent;
-    --background-hover: var(--app-surface-hover);
-    --color: var(--app-text);
-    border: 1px solid var(--app-border);
-  }
-
-  .error-pill {
-    @apply flex items-start gap-4 px-5 py-4 rounded-2xl text-[14px] font-medium;
-    background: var(--app-error-surface);
-    border: 1px solid var(--app-error-border);
-    color: var(--app-error-text);
+  /* ---------- CARD NAV (botones de navegación en tablet) ---------- */
+  .card-nav {
+    @apply rounded-xl transition-all duration-150;
+    background: var(--app-primary);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(230, 18, 106, 0.35);
+    min-height: 80px;
+    border: none;
 
     ion-icon {
-      @apply text-xl shrink-0;
-      color: var(--app-error);
-      margin-top: 1px;
+      color: #ffffff;
+    }
+
+    span {
+      color: #ffffff;
+    }
+
+    &:active {
+      transform: scale(0.97);
+      background: var(--app-primary-active);
+      box-shadow: 0 2px 6px rgba(230, 18, 106, 0.25);
     }
   }
 
-  .version-app {
-    @apply text-[12px];
+  .card-interactive {
+    @apply cursor-pointer;
+    &:hover {
+      border-color: var(--app-border-strong);
+    }
+  }
+
+  .card-selected {
+    border-color: var(--app-primary) !important;
+    background: color-mix(in srgb, var(--app-primary) 5%, var(--app-surface)) !important;
+    box-shadow: 0 0 0 1px var(--app-primary), 0 4px 16px -4px rgba(230, 18, 106, 0.18) !important;
+  }
+
+  /* ---------- BADGES (Samsung SM-X133: larger for 179ppi) ---------- */
+  .badge {
+    @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1;
+    @apply text-[11px] font-semibold uppercase tracking-wider;
+    background: var(--app-surface-hover);
     color: var(--app-text-muted);
-    text-align: center;
-    margin: 0.75rem 0 0;
-    letter-spacing: 0.04em;
-  }
-
-  .card {
-    --background: var(--app-surface);
     border: 1px solid var(--app-border);
-    border-radius: 16px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+    ion-icon {
+      font-size: 0.85rem;
+    }
   }
 
-  .card-highlight {
-    border-color: var(--app-primary);
-    box-shadow: 0 0 0 1px var(--app-primary), 0 4px 12px rgba(230, 18, 106, 0.15);
+  .badge-success {
+    background: var(--app-success-bg);
+    border-color: var(--app-success-border);
+    color: var(--app-success);
   }
 
+  .badge-warning {
+    background: var(--app-warning-bg);
+    border-color: var(--app-warning-border);
+    color: var(--app-warning);
+  }
+
+  .badge-error {
+    background: var(--app-error-surface);
+    border-color: var(--app-error-border);
+    color: var(--app-error-text);
+  }
+
+  /* ---------- STATUS BADGES (Samsung SM-X133) ---------- */
   .badge-status {
     @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1.5;
-    @apply text-[12px] font-semibold uppercase tracking-wider;
+    @apply text-[11px] font-semibold uppercase tracking-wider;
   }
 
   .badge-pending {
@@ -254,65 +345,473 @@ ion-title {
     border: 1px solid var(--app-success-border);
     color: var(--app-success);
   }
+
+  /* ---------- DATA ROWS ---------- */
+  .store-row {
+    @apply flex justify-between items-center gap-2;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--app-border);
+
+    &:first-child { padding-top: 0; }
+
+    &:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+  }
+
+  .store-label {
+    @apply text-[13px];
+    color: var(--app-text-muted);
+  }
+
+  .store-value {
+    @apply text-[14px] font-medium text-right;
+    color: var(--app-text);
+  }
+
+  /* ---------- EVENT CARDS ---------- */
+  .event-card {
+    @apply rounded-xl p-3 border cursor-pointer transition-all duration-200;
+    background: var(--app-surface);
+    border-color: var(--app-border);
+    box-shadow: 0 1px 2px rgba(27, 31, 36, 0.04);
+
+    &:hover {
+      border-color: var(--app-border-strong);
+    }
+  }
+
+  .event-name {
+    @apply text-[15px] font-bold mb-2;
+    color: var(--app-text);
+  }
+
+  .event-detail {
+    @apply flex justify-between items-center mb-1.5;
+    &:last-child { margin-bottom: 0; }
+  }
+
+  .event-detail-label {
+    @apply text-[13px];
+    color: var(--app-text-muted);
+  }
+
+  .event-detail-value {
+    @apply text-[14px] font-medium;
+    color: var(--app-text);
+  }
+
+  /* ---------- HINT TEXT ---------- */
+  .hint-text {
+    @apply text-[12px] mt-2;
+    color: var(--app-text-muted);
+  }
+
+  /* ---------- ICON BADGE (círculo de estado) ---------- */
+  .icon-badge {
+    @apply flex items-center justify-center rounded-xl shrink-0;
+    width: 44px;
+    height: 44px;
+    background: color-mix(in srgb, var(--app-primary) 10%, transparent);
+    color: var(--app-primary);
+
+    ion-icon { font-size: 1.25rem; }
+  }
+
+  /* ---------- ERROR PILL ---------- */
+  .error-pill {
+    @apply flex items-start gap-3 px-4 py-3 rounded-xl text-[13px] font-medium;
+    background: var(--app-error-surface);
+    border: 1px solid var(--app-error-border);
+    color: var(--app-error-text);
+
+    ion-icon {
+      @apply text-lg shrink-0;
+      color: var(--app-error);
+      margin-top: 1px;
+    }
+  }
+
+  /* ---------- WARNING PILL ---------- */
+  .warning-pill {
+    @apply flex items-start gap-3 px-4 py-3 rounded-xl text-[13px] font-medium;
+    background: var(--app-warning-bg);
+    border: 1px solid var(--app-warning-border);
+    color: var(--app-warning);
+
+    ion-icon {
+      @apply text-lg shrink-0;
+      margin-top: 1px;
+    }
+  }
+
+  /* ---------- SUCCESS PILL ---------- */
+  .success-pill {
+    @apply flex items-center gap-2 px-4 py-2.5 rounded-xl text-[14px] font-semibold;
+    background: var(--app-success-bg);
+    border: 1px solid var(--app-success-border);
+    color: var(--app-success);
+  }
+
+  /* ---------- VERSION ---------- */
+  .version-app {
+    @apply text-[12px];
+    color: var(--app-text-muted);
+    text-align: center;
+    margin: 0.75rem 0 0;
+    letter-spacing: 0.04em;
+  }
+
+  /* Columna de alto completo para poder anclar la versión al pie del menú. */
+  .menu-columna {
+    @apply flex flex-col;
+    min-height: 100%;
+  }
+
+  .version-menu {
+    @apply text-[12px];
+    color: var(--app-menu-text-muted);
+    text-align: center;
+    margin: auto 0 0;
+    padding-top: 1.5rem;
+    letter-spacing: 0.04em;
+  }
+
+  /* ---------- MENU (Samsung SM-X133) ---------- */
+  .menu-user-info {
+    @apply text-center;
+    padding: 1rem 0.75rem;
+    margin-bottom: 0.375rem;
+    border-bottom: 1px solid var(--app-menu-border);
+  }
+
+  .menu-user-name {
+    @apply text-sm font-bold mb-1;
+    color: var(--app-menu-text);
+    margin: 0;
+  }
+
+  .menu-user-rut {
+    @apply text-[12px];
+    color: var(--app-menu-text-muted);
+    margin: 0;
+  }
+
+  .menu-list {
+    background: transparent;
+    padding: 0.375rem;
+  }
+
+  .menu-logout-item {
+    --background: transparent;
+    --color: var(--app-error);
+    --border-radius: 10px;
+    --padding-start: 0.625rem;
+    --padding-end: 0.625rem;
+
+    ion-icon {
+      color: var(--app-error);
+    }
+  }
+
+  .menu-theme-item {
+    --background: transparent;
+    --color: var(--app-menu-text);
+    --border-radius: 10px;
+    --padding-start: 0.625rem;
+    --padding-end: 0.625rem;
+
+    ion-icon {
+      color: var(--app-menu-text);
+      font-size: 1.3rem;
+    }
+  }
+
+  .menu-section {
+    margin-bottom: 0.375rem;
+    padding: 0 0.375rem;
+    border-bottom: 1px solid var(--app-menu-border);
+    padding-bottom: 0.375rem;
+  }
+
+  .menu-section-title {
+    @apply flex items-center gap-1.5 text-[10px] font-medium uppercase;
+    font-family: theme('fontFamily.mono');
+    letter-spacing: 0.08em;
+    color: var(--app-menu-text-muted);
+    padding: 0.625rem 0.625rem 0.25rem;
+    margin: 0;
+
+    ion-icon {
+      font-size: 0.9rem;
+    }
+  }
+
+  .menu-store-list {
+    background: transparent;
+    padding: 0.25rem 0;
+  }
+
+  .menu-store-item {
+    --background: transparent;
+    --color: var(--app-menu-text);
+    --border-radius: 10px;
+    --padding-start: 0.625rem;
+    --padding-end: 0.625rem;
+
+    ion-icon {
+      color: var(--app-primary);
+    }
+  }
+
+  .menu-store-selected {
+    --background: color-mix(in srgb, var(--app-primary) 15%, transparent);
+    --color: var(--app-primary);
+    font-weight: 600;
+  }
+
+  /* ---------- CONNECTIVITY ---------- */
+  .conexion-indicator {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    padding-inline-start: 4px;
+  }
+
 }
 
-/* Side Menu */
-ion-menu ion-item {
-  --color: #ffffff;
+/* ===================================================================
+   MODAL DEL BUSCADOR SKU (Samsung SM-X133: 800px)
+   =================================================================== */
+ion-modal.buscador-modal {
+  --width: 92%;
+  --max-width: 700px;
+  --height: auto;
+  --max-height: 80vh;
+  --border-radius: 20px;
   --background: transparent;
+  --box-shadow: 0 24px 60px -20px rgba(27, 31, 36, 0.55);
+  --backdrop-opacity: 0.6;
 
-  &.menu-theme-item {
-    --color: #ffffff;
-    --background: transparent;
-  }
+  align-items: center;
+  justify-content: center;
 
-  &.menu-logout-item {
-    --color: #dc2626;
-    --background: transparent;
+  &::part(backdrop) {
+    background: #3f2087;
   }
+}
 
-  ion-label {
-    color: #ffffff !important;
-  }
+.buscador-tarjeta {
+  @apply rounded-[20px] p-4 overflow-y-auto;
+  max-height: 80vh;
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+}
+
+.buscador-titulo {
+  @apply text-[16px] font-bold;
+  font-family: 'Sora', var(--ion-font-family);
+  letter-spacing: -0.01em;
+  color: var(--app-text);
+}
+
+.buscador-cerrar {
+  @apply flex items-center justify-center rounded-full shrink-0;
+  width: 36px;
+  height: 36px;
+  background: var(--app-surface-hover);
+  color: var(--app-text-muted);
 
   ion-icon {
+    font-size: 1.1rem;
+  }
+}
+
+.buscador-resultados {
+  @apply mt-3;
+  min-height: 92px;
+}
+
+.buscador-aviso {
+  @apply text-[14px] text-center py-6;
+  color: var(--app-text-muted);
+}
+
+.buscador-fila {
+  @apply rounded-2xl px-3 py-2.5 mb-2 border;
+  background: var(--app-surface-hover);
+  border-color: var(--app-border);
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+/* ── Shared Table Styles ── */
+.modal-table-container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--app-border);
+  border-radius: 10px;
+}
+
+.modal-table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 640px;
+
+  th {
+    text-align: left;
+    padding: 0.625rem 0.75rem;
+    background: #e91e63;
     color: #ffffff;
+    font-size: 0.625rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
   }
 
-  &.menu-logout-item ion-label {
-    color: #dc2626 !important;
+  td {
+    padding: 0.625rem 0.75rem;
+    border-bottom: 1px solid var(--app-border);
+    font-size: 0.75rem;
+    vertical-align: middle;
+    color: var(--app-text);
   }
 
-  &.menu-logout-item ion-icon {
-    color: #dc2626;
+  tbody tr:hover td { background: var(--app-surface-hover); }
+}
+
+.num { text-align: right; font-family: 'Sora', var(--ion-font-family); font-variant-numeric: tabular-nums; }
+
+/* ── Quantity Input ── */
+.quantity-input {
+  width: 5rem;
+  padding: 0.375rem 0.5rem;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  font-family: 'Sora', var(--ion-font-family);
+  border: 1px solid var(--app-border);
+  border-radius: 6px;
+  background: var(--app-surface);
+  color: var(--app-text);
+  text-align: right;
+  outline: none;
+
+  &:focus {
+    border-color: var(--app-primary);
+    box-shadow: 0 0 0 2px rgba(230, 18, 106, 0.15);
+  }
+
+  &:not(:disabled) {
+    border-color: var(--app-primary);
+    background: #fff;
   }
 }
 
-ion-menu ion-toolbar {
-  --color: #ffffff;
-  --background: #3F2087;
+/* ── Add SKU ── */
+.add-sku-section { margin-top: 0.25rem; }
+
+.btn-add-sku {
+  border: 1px solid var(--app-primary);
+  border-radius: 9px;
+  padding: 0.5625rem 0.8125rem;
+  font-size: 0.875rem;
+  font-weight: 800;
+  cursor: pointer;
+  background: var(--app-surface);
+  color: var(--app-primary);
+  transition: background 0.15s;
+
+  &:hover { background: rgba(230, 18, 106, 0.08); }
 }
 
-ion-menu ion-title {
-  color: #ffffff !important;
+.add-sku-panel {
+  margin-top: 0.75rem;
+  padding: 1rem;
+  background: var(--app-surface-hover);
+  border: 1px solid var(--app-border);
+  border-radius: 10px;
+
+  h4 {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 900;
+    font-family: 'Sora', var(--ion-font-family);
+    color: var(--app-text);
+  }
+
+  p {
+    margin: 0.25rem 0 0.75rem;
+    font-size: 0.75rem;
+    color: var(--app-text-muted);
+    line-height: 1.45;
+  }
 }
 
-ion-menu .version-menu {
-  color: rgba(255, 255, 255, 0.65) !important;
-}
+/* ── Row Actions ── */
+.row-actions { display: flex; gap: 0.375rem; }
 
-ion-menu .menu-user-info {
+.btn-action {
+  border: 0;
+  border-radius: 7px;
+  padding: 0.375rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+  background: var(--app-primary);
   color: #ffffff;
+  transition: background 0.15s;
+
+  &:hover { background: var(--app-primary-hover); }
 }
 
-ion-menu .menu-user-name {
-  color: #ffffff !important;
+.btn-action-secondary {
+  background: var(--app-surface);
+  color: var(--app-text-muted);
+  border: 1px solid var(--app-border);
+
+  &:hover { background: var(--app-surface-hover); }
 }
 
-ion-menu .menu-user-rut {
-  color: rgba(255, 255, 255, 0.65) !important;
+.btn-action--active {
+  outline: 2px solid var(--app-primary);
+  outline-offset: 1px;
 }
 
-ion-menu .menu-avatar {
-  color: #ffffff;
+.btn:disabled,
+.btn-add-sku:disabled,
+.btn-action:disabled,
+.quantity-input:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ── Product Status ── */
+.product-status {
+  display: inline-flex;
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.625rem;
+  font-weight: 900;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+
+.product-status--confirmed {
+  background: rgba(5, 150, 105, 0.10);
+  color: var(--app-success);
+  border: 1px solid rgba(5, 150, 105, 0.25);
+}
+
+.product-status--pending {
+  background: rgba(180, 83, 9, 0.10);
+  color: var(--app-warning);
+  border: 1px solid rgba(180, 83, 9, 0.25);
 }

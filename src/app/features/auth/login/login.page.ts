@@ -39,6 +39,25 @@ export class LoginPage {
       return;
     }
 
+    // Validar formato RUT (minimo 7 digitos + guion + digito verificador)
+    const rutLimpio = rut.replace(/[^0-9kK]/g, '');
+    if (rutLimpio.length < 8 || rutLimpio.length > 9) {
+      this.errorMessage.set('RUT invalido. Ejemplo: 12345678-5');
+      return;
+    }
+
+    // Validar que termine en guion + verificador
+    if (!rut.includes('-')) {
+      this.errorMessage.set('RUT debe incluir guion y digito verificador');
+      return;
+    }
+
+    // Validar password minimo 6 caracteres
+    if (password.length < 6) {
+      this.errorMessage.set('La contraseña debe tener al menos 6 caracteres');
+      return;
+    }
+
     this.loading.set(true);
     this.errorMessage.set('');
 

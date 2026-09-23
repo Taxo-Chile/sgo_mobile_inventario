@@ -29,22 +29,18 @@
         <div class="flex flex-col gap-2">
           <span class="field-label">Modo de Validación</span>
           <div class="grid grid-cols-2 gap-2">
-            <ion-button
-              class="btn-action btn-success"
-              [class.btn-outline]="modo() !== 'CONFIRMAR'"
-              (click)="setModo('CONFIRMAR')"
-            >
+            <button class="btn-action"
+              [class.btn-action--active]="modo() === 'CONFIRMAR'"
+              (click)="setModo('CONFIRMAR')">
               <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
               Confirmar
-            </ion-button>
-            <ion-button
-              class="btn-action btn-warning"
-              [class.btn-outline]="modo() !== 'MODIFICAR'"
-              (click)="setModo('MODIFICAR')"
-            >
+            </button>
+            <button class="btn-action btn-action-secondary"
+              [class.btn-action--active]="modo() === 'MODIFICAR'"
+              (click)="setModo('MODIFICAR')">
               <ion-icon name="create-outline" slot="start"></ion-icon>
               Modificar
-            </ion-button>
+            </button>
           </div>
         </div>
 

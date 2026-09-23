@@ -6,10 +6,14 @@ export class PreVarianceState {
   private readonly _preVariance = signal<PreVariance | null>(null);
   private readonly _productos = signal<PreVarianceProducto[]>([]);
   private readonly _loading = signal(false);
+  private readonly _estadoCierre = signal<string>('SIN_REGISTRO');
+  private readonly _fechaCierre = signal<string | null>(null);
 
   readonly preVariance = this._preVariance.asReadonly();
   readonly productos = this._productos.asReadonly();
   readonly loading = this._loading.asReadonly();
+  readonly estadoCierre = this._estadoCierre.asReadonly();
+  readonly fechaCierre = this._fechaCierre.asReadonly();
 
   readonly totalPendientes = computed(() =>
     this._productos().filter((p) => p.estado === 'PENDIENTE').length
@@ -44,9 +48,15 @@ export class PreVarianceState {
     return pendientes === 0 && this._productos().length > 0;
   });
 
-  setPreVariance(preVariance: PreVariance | null, productos: PreVarianceProducto[]): void {
+  readonly estaFinalizado = computed(() => {
+    return this._estadoCierre() !== 'SIN_REGISTRO' && this._estadoCierre() !== '';
+  });
+
+  setPreVariance(preVariance: PreVariance | null, productos: PreVarianceProducto[], estadoCierre?: string, fechaCierre?: string | null): void {
     this._preVariance.set(preVariance);
     this._productos.set(productos);
+    if (estadoCierre) this._estadoCierre.set(estadoCierre);
+    if (fechaCierre !== undefined) this._fechaCierre.set(fechaCierre);
   }
 
   setLoading(loading: boolean): void {
@@ -73,5 +83,7 @@ export class PreVarianceState {
     this._preVariance.set(null);
     this._productos.set([]);
     this._loading.set(false);
+    this._estadoCierre.set('SIN_REGISTRO');
+    this._fechaCierre.set(null);
   }
 }

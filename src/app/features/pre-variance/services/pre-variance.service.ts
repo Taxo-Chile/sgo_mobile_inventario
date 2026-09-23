@@ -1,42 +1,44 @@
 import { Injectable, inject } from '@angular/core';
-import { from, Observable, catchError, of } from 'rxjs';
+import { from, Observable, catchError, map, throwError } from 'rxjs';
 import { HttpClient } from '../../../core/http/http-client';
-import { PreVariance, PreVarianceProducto } from '../../../domain/pre-variance/models/pre-variance.model';
+import { PreVariance, PreVarianceProducto, PreVarianceDetalleResponse } from '../../../domain/pre-variance/models/pre-variance.model';
 
 @Injectable({ providedIn: 'root' })
 export class PreVarianceService {
   private http = inject(HttpClient);
 
-  getDetalle(agendaId: number): Observable<{
-    pre_variances: PreVariance[];
-    productos: PreVarianceProducto[];
-    total_pendientes: number;
-    total_aprobados: number;
-    total_rechazados: number;
-    monto_total_diferencia: number;
-  }> {
+  getDetalle(agendaId: number): Observable<PreVarianceDetalleResponse> {
     return from(
       this.http.get<any>(`tablet/pre-variance/detalle.php?agenda_id=${agendaId}`)
     ).pipe(
-      catchError(() => of({
-        pre_variances: [],
-        productos: [],
-        total_pendientes: 0,
-        total_aprobados: 0,
-        total_rechazados: 0,
-        monto_total_diferencia: 0,
+      map((response) => ({
+        pre_variances: response.pre_variances ?? [],
+        productos: response.productos ?? [],
+        total_diferencias: response.total_diferencias ?? 0,
+        estado_cierre: response.estado_cierre ?? 'SIN_REGISTRO',
+        fecha_cierre: response.fecha_cierre ?? null,
       }))
     );
   }
 
-  validar(preVarianceId: number, productos: { producto_id: number; estado: string; motivo?: string }[]): Observable<void> {
+  guardar(agendaId: number, productos: {
+    id_producto: number;
+    id_tag: number;
+    decision: 'APROBADO' | 'RECHAZADO';
+    cantidad: number;
+    motivo?: string;
+  }[]): Observable<any> {
     return from(
-      this.http.post<void>(`tablet/pre-variance/validar.php`, {
-        pre_variance_id: preVarianceId,
+      this.http.post<any>('tablet/pre-variance/guardar.php', {
+        agenda_id: agendaId,
+        login: 'APP_TABLET',
         productos,
       })
     ).pipe(
-      catchError(() => of(undefined))
+      catchError((err) => {
+        console.error('Error guardando Pre Variance:', err);
+        return throwError(() => err);
+      })
     );
   }
 }

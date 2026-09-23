@@ -1,0 +1,326 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      @if (informeActual) {
+        <ion-button (click)="volver()">
+          <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+      } @else {
+        <ion-back-button defaultHref="/home" text="Volver"></ion-back-button>
+      }
+    </ion-buttons>
+    <ion-title>{{ informeActual ? 'Informe' : 'Informes' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <app-connectivity-banner />
+
+  <div class="page-inner">
+    @if (!informeActual) {
+      <div class="flex flex-col gap-2 mb-4">
+        <h1 class="page-title">Informes de Cierre</h1>
+        <p class="page-subtitle">Agenda #{{ agendaId }}</p>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        @for (informe of informes; track informe.id) {
+          <ion-card class="card m-0" style="cursor: pointer;" (click)="seleccionarInforme(informe)">
+            <ion-card-content class="flex items-center gap-3 p-4">
+              <ion-icon [name]="informe.icono" class="text-2xl"
+                [style.color]="'var(--app-' + informe.color + ')'">
+              </ion-icon>
+              <div class="flex flex-col gap-1 flex-1">
+                <span class="text-sm font-bold" style="color: var(--app-text)">{{ informe.nombre }}</span>
+                <span class="text-xs" style="color: var(--app-text-muted)">{{ informe.descripcion }}</span>
+              </div>
+              <ion-icon name="chevron-forward-outline" style="color: var(--app-text-muted)"></ion-icon>
+            </ion-card-content>
+          </ion-card>
+        }
+      </div>
+    } @else {
+      @if (loading) {
+        <div class="flex justify-center py-8">
+          <ion-spinner name="crescent"></ion-spinner>
+        </div>
+      } @else if (datosInforme) {
+        <!-- Ejecutivo -->
+        @if (informeActual === 'ejecutivo' && datosInforme.agenda) {
+          <div class="flex flex-col gap-3">
+            <div class="card p-4">
+              <h3 class="text-sm font-bold mb-2" style="color: var(--app-text)">Agenda</h3>
+              <div class="grid grid-cols-2 gap-2 text-xs" style="color: var(--app-text-muted)">
+                <span>Tienda:</span><span class="font-bold">{{ datosInforme.agenda.tienda }}</span>
+                <span>Fecha:</span><span>{{ datosInforme.agenda.fecha }}</span>
+                <span>Estado:</span>
+                <span class="badge-status" [class.badge-active]="datosInforme.agenda.estado === 'CERRADA'">
+                  {{ datosInforme.agenda.nombre_estado }}
+                </span>
+              </div>
+            </div>
+
+            @if (datosInforme.etapas?.pre_variance) {
+              <div class="card p-4">
+                <h3 class="text-sm font-bold mb-2" style="color: var(--app-text)">Pre-Variance</h3>
+                <div class="grid grid-cols-2 gap-2 text-xs" style="color: var(--app-text-muted)">
+                  <span>Estado:</span>
+                  <span class="badge-status" [class.badge-active]="datosInforme.etapas.pre_variance.estado === 'CERRADO'">
+                    {{ datosInforme.etapas.pre_variance.estado }}
+                  </span>
+                  <span>Fecha:</span><span>{{ datosInforme.etapas.pre_variance.fecha }}</span>
+                </div>
+              </div>
+            }
+
+            @if (datosInforme.etapas?.recuento) {
+              <div class="card p-4">
+                <h3 class="text-sm font-bold mb-2" style="color: var(--app-text)">Recuento</h3>
+                <div class="grid grid-cols-2 gap-2 text-xs" style="color: var(--app-text-muted)">
+                  <span>SKU total:</span><span class="font-bold">{{ datosInforme.etapas.recuento.total_sku }}</span>
+                  <span>Corregidos:</span><span>{{ datosInforme.etapas.recuento.total_corregidos }}</span>
+                  <span>Estado:</span>
+                  <span class="badge-status" [class.badge-active]="datosInforme.etapas.recuento.estado === 'CERRADO'">
+                    {{ datosInforme.etapas.recuento.estado }}
+                  </span>
+                </div>
+              </div>
+            }
+
+            @if (datosInforme.etapas?.cierre_final) {
+              <div class="card p-4">
+                <h3 class="text-sm font-bold mb-2" style="color: var(--app-text)">Cierre Final</h3>
+                <div class="grid grid-cols-2 gap-2 text-xs" style="color: var(--app-text-muted)">
+                  <span>SKU:</span><span class="font-bold">{{ datosInforme.etapas.cierre_final.cantidad_sku }}</span>
+                  <span>Stock:</span><span>{{ datosInforme.etapas.cierre_final.total_stock | number:'1.0-0' }}</span>
+                  <span>Fisico:</span><span>{{ datosInforme.etapas.cierre_final.total_fisico | number:'1.0-0' }}</span>
+                  <span>Diferencia:</span>
+                  <span class="font-bold" [style.color]="datosInforme.etapas.cierre_final.total_diferencia != 0 ? 'var(--app-danger)' : 'var(--app-success)'">
+                    {{ datosInforme.etapas.cierre_final.total_diferencia | number:'1.0-0' }}
+                  </span>
+                  <span>Dif. Valor:</span>
+                  <span class="font-bold" [style.color]="datosInforme.etapas.cierre_final.total_diferencia_valor != 0 ? 'var(--app-danger)' : 'var(--app-success)'">
+                    {{ datosInforme.etapas.cierre_final.total_diferencia_valor | currency:'CLP':'symbol':'1.0-0' }}
+                  </span>
+                </div>
+              </div>
+            }
+
+            <div class="card p-4">
+              <h3 class="text-sm font-bold mb-2" style="color: var(--app-text)">Capturas</h3>
+              <div class="grid grid-cols-3 gap-2">
+                <div class="flex flex-col items-center">
+                  <span class="text-lg font-bold" style="color: var(--app-primary)">{{ datosInforme.capturas?.c1 ?? 0 }}</span>
+                  <span class="text-[10px]" style="color: var(--app-text-muted)">C1</span>
+                </div>
+                <div class="flex flex-col items-center">
+                  <span class="text-lg font-bold" style="color: var(--app-success)">{{ datosInforme.capturas?.c2 ?? 0 }}</span>
+                  <span class="text-[10px]" style="color: var(--app-text-muted)">C2</span>
+                </div>
+                <div class="flex flex-col items-center">
+                  <span class="text-lg font-bold" style="color: var(--app-warning)">{{ datosInforme.capturas?.c3 ?? 0 }}</span>
+                  <span class="text-[10px]" style="color: var(--app-text-muted)">C3</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Cierre Final -->
+        @if (informeActual === 'cierre-final' && datosInforme.cierre) {
+          <div class="flex flex-col gap-3">
+            <div class="card p-4">
+              <div class="flex items-center gap-2 mb-2">
+                <h3 class="text-sm font-bold" style="color: var(--app-text)">Snapshot</h3>
+                <span class="badge-status badge-active">{{ datosInforme.cierre.fl_inmutable === 'S' ? 'INMUTABLE' : 'NO' }}</span>
+              </div>
+              <div class="grid grid-cols-2 gap-2 text-xs" style="color: var(--app-text-muted)">
+                <span>Codigo:</span><span class="font-bold">{{ datosInforme.cierre.codigo }}</span>
+                <span>Tienda:</span><span>{{ datosInforme.cierre.tienda }}</span>
+                <span>Hash:</span><span class="text-[9px] font-mono break-all">{{ datosInforme.cierre.hash_cabecera }}</span>
+              </div>
+              <div class="flex gap-2 mt-3">
+                <ion-button class="btn-primary" size="small" (click)="downloadPdf()">
+                  <ion-icon name="document-outline" slot="start"></ion-icon>
+                  PDF
+                </ion-button>
+                <ion-button class="btn-primary btn-success" size="small" (click)="downloadExcel()">
+                  <ion-icon name="grid-outline" slot="start"></ion-icon>
+                  Excel
+                </ion-button>
+                <ion-button class="btn-primary" color="warning" size="small" (click)="downloadZip()">
+                  <ion-icon name="archive-outline" slot="start"></ion-icon>
+                  ZIP
+                </ion-button>
+              </div>
+              <div class="mt-3">
+                <ion-item lines="none" class="ion-no-padding">
+                  <ion-input
+                    placeholder="Correos destinatarios (separar con coma o punto y coma)"
+                    [(ngModel)]="emailDestinatarios"
+                    [disabled]="enviandoCorreo"
+                    class="text-xs"
+                  ></ion-input>
+                </ion-item>
+                <ion-button
+                  class="btn-primary mt-2"
+                  expand="block"
+                  size="small"
+                  (click)="enviarCorreo()"
+                  [disabled]="enviandoCorreo || !emailDestinatarios"
+                >
+                  @if (enviandoCorreo) {
+                    <ion-spinner name="crescent" slot="start"></ion-spinner>
+                    Enviando...
+                  } @else {
+                    <ion-icon name="mail-outline" slot="start"></ion-icon>
+                    Enviar por Correo
+                  }
+                </ion-button>
+              </div>
+            </div>
+
+            <div class="card p-4">
+              <h3 class="text-sm font-bold mb-2" style="color: var(--app-text)">Resumen</h3>
+              <div class="grid grid-cols-2 gap-2 text-xs" style="color: var(--app-text-muted)">
+                <span>SKU:</span><span class="font-bold">{{ datosInforme.resumen.cantidad_sku }}</span>
+                <span>Coincidentes:</span><span style="color: var(--app-success)">{{ datosInforme.resumen.cantidad_coincidentes }}</span>
+                <span>Faltantes:</span><span style="color: var(--app-danger)">{{ datosInforme.resumen.cantidad_faltantes }}</span>
+                <span>Sobrantes:</span><span style="color: var(--app-warning)">{{ datosInforme.resumen.cantidad_sobrantes }}</span>
+                <span>Stock:</span><span>{{ datosInforme.resumen.total_stock_unidades | number:'1.0-0' }}</span>
+                <span>Fisico:</span><span>{{ datosInforme.resumen.total_fisico_unidades | number:'1.0-0' }}</span>
+                <span>Dif. Unidades:</span>
+                <span class="font-bold" [style.color]="datosInforme.resumen.total_diferencia_unidades != 0 ? 'var(--app-danger)' : 'var(--app-success)'">
+                  {{ datosInforme.resumen.total_diferencia_unidades | number:'1.0-0' }}
+                </span>
+                <span>Dif. Valor:</span>
+                <span class="font-bold" [style.color]="datosInforme.resumen.total_diferencia_valor != 0 ? 'var(--app-danger)' : 'var(--app-success)'">
+                  {{ datosInforme.resumen.total_diferencia_valor | currency:'CLP':'symbol':'1.0-0' }}
+                </span>
+              </div>
+            </div>
+
+            @if (datosInforme.por_departamento?.length > 0) {
+              <div class="card p-4">
+                <h3 class="text-sm font-bold mb-2" style="color: var(--app-text)">Por Departamento</h3>
+                @for (dept of datosInforme.por_departamento; track dept.categoria) {
+                  <div class="flex items-center justify-between py-1 border-b" style="border-color: var(--app-border)">
+                    <span class="text-xs" style="color: var(--app-text-muted)">{{ dept.categoria }}</span>
+                    <span class="text-xs font-bold" [style.color]="dept.total_diferencia_valor != 0 ? 'var(--app-danger)' : 'var(--app-success)'">
+                      {{ dept.total_diferencia_valor | currency:'CLP':'symbol':'1.0-0' }}
+                    </span>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Pre-Variance -->
+        @if (informeActual === 'prevariance' && datosInforme.resumen) {
+          <div class="flex flex-col gap-3">
+            <div class="card p-4">
+              <h3 class="text-sm font-bold mb-2" style="color: var(--app-text)">Resumen Pre-Variance</h3>
+              <div class="grid grid-cols-2 gap-2 text-xs" style="color: var(--app-text-muted)">
+                <span>SKU:</span><span class="font-bold">{{ datosInforme.resumen.cantidad_sku }}</span>
+                <span>Conformes:</span><span style="color: var(--app-success)">{{ datosInforme.resumen.conformes }}</span>
+                <span>Diferencias:</span><span style="color: var(--app-danger)">{{ datosInforme.resumen.diferencias }}</span>
+                <span>Dif. Valor:</span>
+                <span class="font-bold" style="color: var(--app-danger)">
+                  {{ datosInforme.resumen.total_diferencia_valor | currency:'CLP':'symbol':'1.0-0' }}
+                </span>
+              </div>
+            </div>
+
+            @if (datosInforme.por_departamento?.length > 0) {
+              <div class="card p-4">
+                <h3 class="text-sm font-bold mb-2" style="color: var(--app-text)">Por Departamento</h3>
+                @for (dept of datosInforme.por_departamento; track dept.categoria) {
+                  <div class="flex items-center justify-between py-1 border-b" style="border-color: var(--app-border)">
+                    <span class="text-xs" style="color: var(--app-text-muted)">{{ dept.categoria }}</span>
+                    <div class="flex items-center gap-2">
+                      <span class="text-[10px]" style="color: var(--app-success)">{{ dept.conformes }}OK</span>
+                      <span class="text-[10px]" style="color: var(--app-danger)">{{ dept.diferencias }}DIF</span>
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Validacion TAGs -->
+        @if (informeActual === 'validacion-tag' && datosInforme.resumen) {
+          <div class="flex flex-col gap-3">
+            <div class="card p-4">
+              <h3 class="text-sm font-bold mb-2" style="color: var(--app-text)">Resumen TAGs</h3>
+              <div class="grid grid-cols-3 gap-2">
+                <div class="flex flex-col items-center">
+                  <span class="text-lg font-bold" style="color: var(--app-primary)">{{ datosInforme.resumen.total_tags }}</span>
+                  <span class="text-[10px]" style="color: var(--app-text-muted)">Total</span>
+                </div>
+                <div class="flex flex-col items-center">
+                  <span class="text-lg font-bold" style="color: var(--app-success)">{{ datosInforme.resumen.tags_activos }}</span>
+                  <span class="text-[10px]" style="color: var(--app-text-muted)">Activos</span>
+                </div>
+                <div class="flex flex-col items-center">
+                  <span class="text-lg font-bold" style="color: var(--app-danger)">{{ datosInforme.resumen.tags_anulados }}</span>
+                  <span class="text-[10px]" style="color: var(--app-text-muted)">Anulados</span>
+                </div>
+              </div>
+            </div>
+
+            @for (tag of datosInforme.tags; track tag.id_tag) {
+              <div class="card p-3">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-sm font-bold" style="color: var(--app-text)">TAG #{{ tag.numero_tag }}</span>
+                  <span class="badge-status" [class.badge-active]="tag.estado === 'ABIERTO'" [class.badge-pending]="tag.estado === 'ANULADO'">
+                    {{ tag.estado }}
+                  </span>
+                </div>
+                <span class="text-xs" style="color: var(--app-text-muted)">{{ tag.cantidad_productos }} productos</span>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Captura Final -->
+        @if (informeActual === 'captura-final' && datosInforme.resumen) {
+          <div class="flex flex-col gap-3">
+            <div class="card p-4">
+              <h3 class="text-sm font-bold mb-2" style="color: var(--app-text)">Resumen Capturas</h3>
+              <div class="grid grid-cols-3 gap-2 mb-3">
+                <div class="flex flex-col items-center">
+                  <span class="text-lg font-bold" style="color: var(--app-primary)">{{ datosInforme.resumen.total_c1 | number:'1.0-0' }}</span>
+                  <span class="text-[10px]" style="color: var(--app-text-muted)">C1</span>
+                </div>
+                <div class="flex flex-col items-center">
+                  <span class="text-lg font-bold" style="color: var(--app-success)">{{ datosInforme.resumen.total_c2 | number:'1.0-0' }}</span>
+                  <span class="text-[10px]" style="color: var(--app-text-muted)">C2</span>
+                </div>
+                <div class="flex flex-col items-center">
+                  <span class="text-lg font-bold" style="color: var(--app-warning)">{{ datosInforme.resumen.total_c3 | number:'1.0-0' }}</span>
+                  <span class="text-[10px]" style="color: var(--app-text-muted)">C3</span>
+                </div>
+              </div>
+              <div class="grid grid-cols-3 gap-2">
+                <div class="flex flex-col items-center">
+                  <span class="text-sm font-bold" style="color: var(--app-success)">{{ datosInforme.resumen.confirmados }}</span>
+                  <span class="text-[10px]" style="color: var(--app-text-muted)">Confirmados</span>
+                </div>
+                <div class="flex flex-col items-center">
+                  <span class="text-sm font-bold" style="color: var(--app-warning)">{{ datosInforme.resumen.modificados }}</span>
+                  <span class="text-[10px]" style="color: var(--app-text-muted)">Modificados</span>
+                </div>
+                <div class="flex flex-col items-center">
+                  <span class="text-sm font-bold" style="color: var(--app-text-muted)">{{ datosInforme.resumen.pendientes }}</span>
+                  <span class="text-[10px]" style="color: var(--app-text-muted)">Pendientes</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      }
+    }
+  </div>
+</ion-content>
