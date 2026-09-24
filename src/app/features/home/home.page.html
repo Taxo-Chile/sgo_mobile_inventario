@@ -28,6 +28,30 @@
           </ion-item>
         </ion-menu-toggle>
 
+        <!--
+          Actualización de la app. Se ofrece siempre, no sólo cuando hay una
+          disponible: si apareciera y desapareciera, el operador al que le
+          dijeron "andá a actualizar" no encontraría el botón y llamaría a
+          soporte. Cuando no hay nada nuevo, responde que ya está al día.
+        -->
+        <ion-menu-toggle>
+          <ion-item button (click)="buscarActualizacion()" [disabled]="buscandoActualizacion() || descargandoVersion()" class="menu-theme-item">
+            <ion-icon slot="start" name="cloud-download-outline"></ion-icon>
+            <ion-label>
+              @if (descargandoVersion()) {
+                Descargando{{ porcentajeVersion() !== null ? ' ' + porcentajeVersion() + '%' : '…' }}
+              } @else if (buscandoActualizacion()) {
+                Buscando…
+              } @else {
+                Actualizar la app
+              }
+            </ion-label>
+            @if (buscandoActualizacion() || descargandoVersion()) {
+            <ion-spinner slot="end" name="crescent"></ion-spinner>
+            }
+          </ion-item>
+        </ion-menu-toggle>
+
         <!-- Theme toggle -->
         <ion-menu-toggle>
           <ion-item button (click)="toggleTheme()" class="menu-theme-item">
@@ -45,7 +69,7 @@
         </ion-menu-toggle>
       </ion-list>
 
-      <p class="version-menu">SGO Tablet v0.1.0</p>
+      <p class="version-menu">SGO Tablet v{{ appVersion }}</p>
     </div>
   </ion-content>
 </ion-menu>
@@ -54,6 +78,41 @@
   <app-connectivity-banner />
 
   <div class="page-inner">
+    <!--
+      Versión nueva disponible. Va como franja y no como alerta emergente: el
+      operador entra a Inicio para empezar a trabajar, y un popup automático lo
+      obliga a despacharlo antes de poder hacer nada. La franja se queda ahí
+      hasta que la toque.
+
+      Va primera, sin contenido adelante: es lo que el operador tiene que ver
+      antes de arrancar, y un aviso que queda bajo la lista de tiendas es un
+      aviso que no se lee.
+
+      La obligatoria no trae "Ahora no": el servidor marcó esa versión como no
+      apta para seguir trabajando.
+    -->
+    @if (hayVersionNueva()) {
+    <div class="status-banner status-banner-info status-banner-acciones mb-4">
+      <div class="banner-linea">
+        <ion-icon name="sync-outline"></ion-icon>
+        <span>
+          Hay una versión nueva de la app<strong>{{ versionDisponible()?.versionName ? ' (' + versionDisponible()?.versionName + ')' : '' }}</strong>.
+          @if (descargandoVersion()) {
+          Descargando{{ porcentajeVersion() !== null ? ' ' + porcentajeVersion() + '%' : '' }}.
+          }
+        </span>
+      </div>
+      @if (!descargandoVersion()) {
+      <div class="banner-acciones">
+        @if (!versionDisponible()?.obligatoria) {
+        <ion-button fill="clear" size="small" (click)="descartarActualizacion()">Ahora no</ion-button>
+        }
+        <ion-button fill="clear" size="small" (click)="ofrecerActualizacion()">Actualizar</ion-button>
+      </div>
+      }
+    </div>
+    }
+
     <div class="flex flex-col gap-2">
       <h1 class="page-title">Mis Tiendas</h1>
       <p class="page-subtitle">Selecciona una tienda para validar inventario</p>

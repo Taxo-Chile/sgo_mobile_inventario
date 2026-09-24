@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { from, Observable, catchError, of, map } from 'rxjs';
 import { HttpClient } from '../../core/http/http-client';
 import { ValidacionRepository, TagOperationResult, ProductoBuscado } from '../../domain/validacion/repositories/validacion.repository';
@@ -7,10 +7,8 @@ import { MockDataService } from '../../shared/services/mock-data.service';
 
 @Injectable({ providedIn: 'root' })
 export class ValidacionApiRepository implements ValidacionRepository {
-  constructor(
-    private http: HttpClient,
-    private mockData: MockDataService
-  ) {}
+  private readonly http = inject(HttpClient);
+  private readonly mockData = inject(MockDataService);
 
   getTAGDetalle(agendaId: number, tagId: number): Observable<ValidacionTAG> {
     return from(this.http.get<ValidacionTAG>(`tablet/tag-detalle.php?agenda_id=${agendaId}&tag_id=${tagId}`)).pipe(

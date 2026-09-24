@@ -35,6 +35,19 @@ h1, h2, h3, .page-title, .sync-title {
 
 @import "@ionic/angular/css/palettes/dark.class.css";
 
+/* Texto solo para lectores de pantalla: oculto visualmente, disponible para a11y */
+.ion-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
 /* ===================================================================
    App bar — barra plana con borde de 1px, como el canvas
    =================================================================== */
@@ -623,6 +636,67 @@ ion-title {
     padding-inline-start: 4px;
   }
 
+  /* ---------- FRANJAS DE ESTADO ---------- */
+  .status-banner {
+    @apply flex items-center gap-2 rounded-2xl px-4 py-3 text-[13px] font-medium;
+    border: 1px solid transparent;
+  }
+
+  .status-banner-info {
+    background: var(--app-surface);
+    border-color: var(--app-border);
+    color: var(--app-text-muted);
+  }
+
+  .status-banner-success {
+    background: var(--app-success-bg);
+    border-color: var(--app-success-border);
+    color: var(--app-success);
+  }
+
+  .status-banner-error {
+    background: var(--app-error-surface);
+    border-color: var(--app-error-border);
+    color: var(--app-error-text);
+  }
+
+  .status-banner-warning {
+    background: var(--app-warning-bg);
+    border-color: var(--app-warning-border);
+    color: var(--app-warning);
+  }
+
+  /*
+   * Franja que además de avisar ofrece una acción.
+   *
+   * Va en DOS filas —texto arriba, botones abajo— y no en una. En la pantalla
+   * angosta de la tablet, dos botones en la misma línea le dejan al texto una
+   * columna de cuatro palabras: "Hay una / versión / nueva de la / app (0.1.5)."
+   * El aviso deja de leerse de un vistazo, que es lo único que tiene que hacer.
+   */
+  .status-banner-acciones {
+    @apply flex-col items-stretch gap-2;
+
+    .banner-linea {
+      @apply flex items-center gap-2;
+    }
+
+    .banner-acciones {
+      @apply flex items-center justify-center gap-1;
+    }
+  }
+
+}
+
+/*
+ * Alertas de la autoactualización: el mensaje viaja con saltos de línea como \n
+ * porque Ionic trae innerHTML deshabilitado en las alertas y no vale la pena
+ * abrirlo globalmente para esto. Sin white-space: pre-line los \n no se respetan
+ * y todo el texto queda en una sola línea ilegible.
+ */
+.alerta-respaldo .alert-message {
+  white-space: pre-line;
+  word-break: break-word;
 }
 
 /* ===================================================================

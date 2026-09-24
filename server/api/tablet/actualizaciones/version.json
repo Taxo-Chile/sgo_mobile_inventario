@@ -1,0 +1,11 @@
+{
+  "status": "OK",
+  "data": {
+    "version_code": 1,
+    "version_name": "0.1.0",
+    "url": "http://50.16.13.230/app/ws/sodimac/apk_analista/sgo-0.1.0-vc1.apk",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "obligatoria": false,
+    "notas": "Manifiesto de PRODUCCION: lo leen las tablets en terreno. Hoy version_code = versionCode instalado (1), asi que no se ofrece nada. COMPLETAR antes del primer release: version_code/version_name junto con android/app/build.gradle (y APP_VERSION), url con el nombre EXACTO del APK subido, y sha256 real del archivo. El sha256 de ceros es un marcador de posicion: si version_code se sube sin actualizarlo, la descarga se verifica mal y la app muestra 'La descarga fallo' en vez de instalar un archivo que nadie valido."
+  }
+}

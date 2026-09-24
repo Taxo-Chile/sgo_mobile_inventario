@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { from, Observable, catchError } from 'rxjs';
 import { HttpClient } from '../../core/http/http-client';
 import { AgendaRepository } from '../../domain/agenda/repositories/agenda.repository';
@@ -7,10 +7,8 @@ import { MockDataService } from '../../shared/services/mock-data.service';
 
 @Injectable({ providedIn: 'root' })
 export class AgendaApiRepository implements AgendaRepository {
-  constructor(
-    private http: HttpClient,
-    private mockData: MockDataService
-  ) {}
+  private readonly http = inject(HttpClient);
+  private readonly mockData = inject(MockDataService);
 
   getAgendasPorAuditor(auditorRut: string): Observable<Agenda[]> {
     return from(this.http.get<Agenda[]>(`tablet/agendas.php?rut=${auditorRut}`)).pipe(

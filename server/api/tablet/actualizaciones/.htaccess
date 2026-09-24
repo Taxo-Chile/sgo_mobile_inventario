@@ -1,0 +1,28 @@
+# CORS para el manifiesto de versión.
+#
+# Hace falta porque version.json es un archivo ESTÁTICO y los headers de CORS
+# del web service sólo alcanzan a los .php: se comprobó contra el servidor que
+# los PHP los devuelven y los JSON no. Sin ellos el WebView de Android rechaza
+# la respuesta aunque el archivo esté bien.
+#
+# Va acotado a esta carpeta a propósito. Tocar el .htaccess de api/ arriesga
+# los endpoints que ya funcionan; acá abajo, lo peor que puede pasar es que no
+# tenga efecto.
+#
+# `Header always set` REEMPLAZA lo heredado en vez de duplicarlo, así que si un
+# día el .htaccess padre empieza a poner estos mismos headers, acá no quedan
+# dos — y duplicados el WebView también los rechaza.
+#
+# IMPORTANTE: que los headers los ponga SOLO Apache. Si algún día esto pasa a
+# ser un PHP, que no los setee también — duplicados, el WebView los rechaza.
+<IfModule mod_headers.c>
+    Header always set Access-Control-Allow-Origin "*"
+    Header always set Access-Control-Allow-Methods "GET, OPTIONS"
+    Header always set Access-Control-Allow-Headers "Content-Type, Authorization"
+    Header always set Access-Control-Max-Age "86400"
+
+    # El manifiesto cambia con cada release y la tablet tiene que ver el cambio
+    # al instante. Sin esto, un proxy o el propio WebView pueden servir la
+    # versión vieja y la actualización no aparece nunca.
+    Header always set Cache-Control "no-cache, no-store, must-revalidate"
+</IfModule>

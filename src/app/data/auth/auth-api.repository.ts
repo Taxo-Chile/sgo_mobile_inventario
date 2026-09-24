@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { from, Observable, map, catchError, of } from 'rxjs';
 import { HttpClient } from '../../core/http/http-client';
 import { AuthRepository } from '../../domain/auth/repositories/auth.repository';
@@ -7,10 +7,8 @@ import { MockDataService } from '../../shared/services/mock-data.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthApiRepository implements AuthRepository {
-  constructor(
-    private http: HttpClient,
-    private mockData: MockDataService
-  ) {}
+  private readonly http = inject(HttpClient);
+  private readonly mockData = inject(MockDataService);
 
   login(credentials: LoginRequest): Observable<User> {
     return from(this.http.post<{ user: User }>('auth/login.php', credentials)).pipe(

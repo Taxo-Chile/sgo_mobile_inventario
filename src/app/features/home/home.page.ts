@@ -9,6 +9,8 @@ import { NotificationService } from '../../shared/services/notification.service'
 import { ConnectivityBannerComponent } from '../../shared/components/connectivity-banner/connectivity-banner.component';
 import { ThemeState } from '../../state/theme/theme.state';
 import { Agenda } from '../../domain/agenda/models/agenda.model';
+import { OfertaActualizacionService } from '../../shared/services/oferta-actualizacion.service';
+import { APP_VERSION } from '../../core/version';
 
 @Component({
   selector: 'app-home',
@@ -25,11 +27,44 @@ export class HomePage implements OnInit {
   private agendaState = inject(AgendaState);
   private notification = inject(NotificationService);
   private themeState = inject(ThemeState);
+  private oferta = inject(OfertaActualizacionService);
 
   user = this.authState.user;
   agendas = this.agendaState.agendas;
   loading = this.agendaState.loading;
   isDark = this.themeState.isDark;
+
+  /** Versión mostrada en el menú lateral. */
+  appVersion = APP_VERSION;
+
+  /*
+   * Versión nueva para ofrecer. La consulta se dispara al entrar a esta
+   * pantalla —ver ionViewWillEnter— porque en Inicio nunca hay un recuento
+   * abierto: la app se CIERRA para instalarse, y ofrecerlo a mitad de un conteo
+   * sería ofrecerle al operador perder el hilo.
+   */
+  hayVersionNueva = this.oferta.ofrecible;
+  versionDisponible = this.oferta.disponible;
+  descargandoVersion = this.oferta.descargando;
+  porcentajeVersion = this.oferta.porcentaje;
+  buscandoActualizacion = this.oferta.buscando;
+
+  ofrecerActualizacion(): void {
+    void this.oferta.ofrecer();
+  }
+
+  descartarActualizacion(): void {
+    this.oferta.descartar();
+  }
+
+  /*
+   * Botón del menú. A diferencia de la consulta silenciosa, acá se contesta
+   * siempre —aunque no haya nada nuevo—: el operador tocó un botón y se quedó
+   * mirando, y no decirle nada es dejarlo sin saber si funcionó.
+   */
+  buscarActualizacion(): void {
+    void this.oferta.buscarYResponder();
+  }
 
   selectedDate = signal<string>(this.getToday());
   selectedTienda = signal<string>('Todos');
@@ -58,6 +93,19 @@ export class HomePage implements OnInit {
 
   ngOnInit() {
     this.loadAgendas();
+  }
+
+  /*
+   * Se consulta por versión nueva ACÁ y no en el arranque de la app: entrar a
+   * Inicio es la señal de que el operador no está contando. El servicio espacia
+   * las consultas (5 minutos), así que entrar y salir varias veces no le pega al
+   * servidor cada vez.
+   *
+   * Sin await y sin catch: si falla, no se ofrece nada y listo. Una consulta de
+   * versión no puede demorar ni romper la carga de la pantalla.
+   */
+  ionViewWillEnter(): void {
+    void this.oferta.buscarEnSilencio();
   }
 
   loadAgendas() {

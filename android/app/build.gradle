@@ -1,0 +1,97 @@
+apply plugin: 'com.android.application'
+
+/*
+ * Datos de la llave de firma. Viven en android/keystore.properties, que está en
+ * .gitignore junto con el .jks: las contraseñas no van al repositorio.
+ *
+ * El archivo es OPCIONAL a propósito. Sin él, el proyecto sigue compilando en
+ * debug y cualquiera puede clonar y levantar la app; lo único que no se puede
+ * hacer es firmar el release. Si fuera obligatorio, cada desarrollador nuevo se
+ * encontraría con un build roto sin saber por qué.
+ *
+ * Ver keystore.properties.example para el formato.
+ */
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def hayKeystore = keystorePropertiesFile.exists()
+if (hayKeystore) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
+android {
+    namespace = "cl.taxo.sgo.inventario"
+    compileSdk = rootProject.ext.compileSdkVersion
+    defaultConfig {
+        applicationId "cl.taxo.sgo.inventario"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        // La versión que la autoactualización compara con "versionCode" del
+        // manifiesto. versionName es lo que se ve en Ajustes, pero la decisión de
+        // actualizar se toma SOLO con versionCode: son números enteros y se
+        // comparan sin ambigüedad, mientras que "0.1.10" > "0.1.9" no es
+        // cierto si se compara como texto. Ambos tienen que subir juntos.
+        versionCode 1
+        versionName "0.1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        aaptOptions {
+             // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
+             // Default: https://android.googlesource.com/platform/frameworks/base/+/282e181b58cf72b6ca770dc7ca5f91f135444502/tools/aapt/AaptAssets.cpp#61
+            ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
+        }
+    }
+    signingConfigs {
+        release {
+            if (hayKeystore) {
+                storeFile     file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+                keyAlias      keystoreProperties['keyAlias']
+                keyPassword   keystoreProperties['keyPassword']
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            /*
+             * Sin keystore.properties el release queda SIN FIRMAR, y una APK sin
+             * firmar no se instala. Es deliberado: mejor que falle al instalar y
+             * se note, a que se firme con la llave de debug y recién se descubra
+             * cuando la actualización rebote en las tablets por firma distinta.
+             */
+            if (hayKeystore) {
+                signingConfig signingConfigs.release
+            }
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+repositories {
+    flatDir{
+        dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
+    implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"
+    implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"
+    implementation project(':capacitor-android')
+    testImplementation "junit:junit:$junitVersion"
+    androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
+    implementation project(':capacitor-cordova-android-plugins')
+}
+
+apply from: 'capacitor.build.gradle'
+
+try {
+    def servicesJSON = file('google-services.json')
+    if (servicesJSON.text) {
+        apply plugin: 'com.google.gms.google-services'
+    }
+} catch(Exception e) {
+    logger.info("google-services.json not found, google-services plugin not applied. Push Notifications won't work")
+}

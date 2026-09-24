@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">SGO Inventario</string>
+    <string name="title_activity_main">SGO Inventario</string>
+    <string name="package_name">cl.taxo.sgo.inventario</string>
+    <string name="custom_url_scheme">cl.taxo.sgo.inventario</string>
+</resources>

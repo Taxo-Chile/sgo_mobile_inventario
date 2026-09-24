@@ -33,7 +33,12 @@ Thumbs.db
 .storybook/
 
 # Capacitor
-android/
+#
+# android/ SÍ se versiona: adentro vive ActualizadorPlugin.java, que es lo que
+# instala las APK de la autoactualización, más el registro del plugin en
+# MainActivity.java y el permiso REQUEST_INSTALL_PACKAGES del manifiesto. Sin
+# esos archivos en el repo, cada clon quedaría sin poder actualizarse y sin
+# ningún error que lo delate. ios/ no existe y sigue ignorado.
 ios/
 
 # Environment

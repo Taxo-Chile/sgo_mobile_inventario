@@ -27,6 +27,10 @@ module.exports = tseslint.config(
   {
     files: ["**/*.html"],
     extends: [...angular.configs.templateRecommended],
-    rules: {},
+    rules: {
+      // `X != 0` se mantiene a propósito: el servidor puede enviar "" o "0"
+      // y con `!==` el color de la pantalla cambiaría. Sólo advertencia.
+      "@angular-eslint/template/eqeqeq": "warn",
+    },
   }
 );

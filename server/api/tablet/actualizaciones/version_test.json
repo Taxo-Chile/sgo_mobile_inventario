@@ -1,0 +1,11 @@
+{
+  "status": "OK",
+  "data": {
+    "version_code": 2,
+    "version_name": "0.1.1",
+    "url": "http://50.16.13.230/app/ws/sodimac/apk_analista/sgo-0.1.1-vc2.apk",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "obligatoria": false,
+    "notas": "Manifiesto de PRUEBA. Solo lo leen las builds de desarrollo (environment.ts y environment.dev-mockup.ts). version_code = 2 a proposito: la build de desarrollo se compila con versionCode 1, asi que siempre hay una 'version mas nueva' y se puede probar la franja de Inicio y el boton del menú sin tocar version.json. Si el APK todavia no existe, la descarga falla y la app muestra 'La descarga fallo' — que es exactamente el camino que se quiere probar antes de subir nada a produccion."
+  }
+}

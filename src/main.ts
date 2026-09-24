@@ -41,8 +41,10 @@ import {
   archiveOutline,
   mailOutline,
   cloudOfflineOutline,
+  cloudDownloadOutline,
   flaskOutline,
   informationCircleOutline,
+  syncOutline,
 } from 'ionicons/icons';
 
 addIcons({
@@ -81,10 +83,12 @@ addIcons({
   'archive-outline': archiveOutline,
   'mail-outline': mailOutline,
   'cloud-offline-outline': cloudOfflineOutline,
+  'cloud-download-outline': cloudDownloadOutline,
   'flask-outline': flaskOutline,
   'print-outline': printOutline,
   'clipboard-outline': clipboardOutline,
   'information-circle-outline': informationCircleOutline,
+  'sync-outline': syncOutline,
 });
 
 bootstrapApplication(AppComponent, appConfig).catch((err) =>
