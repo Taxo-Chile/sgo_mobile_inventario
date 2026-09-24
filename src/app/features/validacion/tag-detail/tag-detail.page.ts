@@ -176,7 +176,11 @@ export class TagDetailPage implements OnInit {
   async abrirCrearTAG() {
     const modal = await this.modalCtrl.create({
       component: CrearTagModalComponent,
+      componentProps: {},
+      cssClass: 'crear-tag-modal',
+      backdropDismiss: true,
     });
+    modal.setAttribute('aria-label', 'Crear TAG nuevo');
 
     await modal.present();
 

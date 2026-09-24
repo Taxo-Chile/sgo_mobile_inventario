@@ -28,17 +28,27 @@
 
         <div class="flex flex-col gap-2">
           <span class="field-label">Modo de Validación</span>
-          <div class="grid grid-cols-2 gap-2">
+          <div class="grid grid-cols-2 gap-2" role="group" aria-label="Modo de validación">
             <button class="btn-action"
+              type="button"
+              [attr.aria-pressed]="modo() === 'CONFIRMAR'"
               [class.btn-action--active]="modo() === 'CONFIRMAR'"
               (click)="setModo('CONFIRMAR')">
-              <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+              <ion-icon name="checkmark-circle-outline" slot="start" aria-hidden="true"></ion-icon>
+              @if (modo() === 'CONFIRMAR') {
+                <span class="ion-sr-only">(activo) </span>
+              }
               Confirmar
             </button>
             <button class="btn-action btn-action-secondary"
+              type="button"
+              [attr.aria-pressed]="modo() === 'MODIFICAR'"
               [class.btn-action--active]="modo() === 'MODIFICAR'"
               (click)="setModo('MODIFICAR')">
-              <ion-icon name="create-outline" slot="start"></ion-icon>
+              <ion-icon name="create-outline" slot="start" aria-hidden="true"></ion-icon>
+              @if (modo() === 'MODIFICAR') {
+                <span class="ion-sr-only">(activo) </span>
+              }
               Modificar
             </button>
           </div>
@@ -46,20 +56,25 @@
 
         @if (modo() === 'MODIFICAR') {
           <div class="flex flex-col gap-2">
-            <span class="field-label">Cantidad C2 (Nueva)</span>
+            <span class="field-label" id="c2-label">Cantidad C2 (Nueva)</span>
             <ion-input
+              id="c2-cantidad"
               class="input-base"
+              aria-label="Cantidad C2 (Nueva)"
               type="number"
               inputmode="numeric"
               enterkeyhint="next"
               min="0"
+              maxlength="7"
               placeholder="Ingresa cantidad"
+              [attr.aria-invalid]="campoError() ? 'true' : null"
+              [attr.aria-describedby]="campoError() ? 'c2-error' : null"
               [value]="c2Cantidad()"
               (ionInput)="onCantidadInput($event)"
             ></ion-input>
             @if (campoError()) {
-              <div class="error-pill">
-                <ion-icon name="alert-circle-outline"></ion-icon>
+              <div class="error-pill" id="c2-error" role="alert" aria-live="assertive">
+                <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
                 <span>{{ campoError() }}</span>
               </div>
             }
@@ -68,16 +83,20 @@
           <div class="flex flex-col gap-2">
             <span class="field-label">Motivo de Modificación</span>
             <ion-textarea
+              id="motivo-modificacion"
               class="input-base"
+              aria-label="Motivo de Modificación"
               placeholder="Describe el motivo..."
+              [attr.aria-invalid]="motivoError() ? 'true' : null"
+              [attr.aria-describedby]="motivoError() ? 'motivo-error' : null"
               [value]="motivo()"
               (ionInput)="onMotivoInput($event)"
               [autoGrow]="true"
               [rows]="3"
             ></ion-textarea>
             @if (motivoError()) {
-              <div class="error-pill">
-                <ion-icon name="alert-circle-outline"></ion-icon>
+              <div class="error-pill" id="motivo-error" role="alert" aria-live="assertive">
+                <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
                 <span>{{ motivoError() }}</span>
               </div>
             }

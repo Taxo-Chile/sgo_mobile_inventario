@@ -8,8 +8,8 @@ import { ConnectivityService } from '../../services/connectivity.service';
   imports: [IonicModule],
   template: `
     @if (!connectivity.isOnline()) {
-      <div class="connectivity-banner">
-        <ion-icon name="cloud-offline-outline"></ion-icon>
+      <div class="connectivity-banner" role="status" aria-live="polite">
+        <ion-icon name="cloud-offline-outline" aria-hidden="true"></ion-icon>
         <span>Sin conexión - Los cambios se sincronizarán cuando vuelva la red</span>
       </div>
     }
@@ -21,8 +21,9 @@ import { ConnectivityService } from '../../services/connectivity.service';
         align-items: center;
         gap: 8px;
         padding: 8px 16px;
-        background: var(--app-warning);
-        color: white;
+        background: var(--app-warning-bg);
+        border-bottom: 1px solid var(--app-warning-border);
+        color: var(--app-warning);
         font-size: 12px;
         font-weight: 500;
         text-align: center;
@@ -31,6 +32,7 @@ import { ConnectivityService } from '../../services/connectivity.service';
 
       ion-icon {
         font-size: 16px;
+        color: var(--app-warning);
       }
     `,
   ],

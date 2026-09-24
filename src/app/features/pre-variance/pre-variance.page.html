@@ -12,8 +12,9 @@
 
   <div class="page-inner">
     @if (loading()) {
-      <div class="flex justify-center py-8">
-        <ion-spinner name="crescent"></ion-spinner>
+      <div class="flex justify-center py-8" role="status" aria-live="polite">
+        <ion-spinner name="crescent" aria-label="Cargando"></ion-spinner>
+        <span class="ion-sr-only">Cargando Pre Variance…</span>
       </div>
     } @else if (preVariance(); as pv) {
       @if (estaFinalizado()) {

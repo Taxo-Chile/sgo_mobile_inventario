@@ -2,8 +2,8 @@
   <ion-toolbar>
     <ion-buttons slot="start">
       @if (informeActual) {
-        <ion-button (click)="volver()">
-          <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
+        <ion-button aria-label="Volver" (click)="volver()">
+          <ion-icon name="arrow-back-outline" slot="icon-only" aria-hidden="true"></ion-icon>
         </ion-button>
       } @else {
         <ion-back-button defaultHref="/home" text="Volver"></ion-back-button>
@@ -25,24 +25,25 @@
 
       <div class="flex flex-col gap-2">
         @for (informe of informes; track informe.id) {
-          <ion-card class="card m-0" style="cursor: pointer;" (click)="seleccionarInforme(informe)">
+          <ion-card button class="card m-0" style="cursor: pointer;" (click)="seleccionarInforme(informe)">
             <ion-card-content class="flex items-center gap-3 p-4">
-              <ion-icon [name]="informe.icono" class="text-2xl"
+              <ion-icon [name]="informe.icono" class="text-2xl" aria-hidden="true"
                 [style.color]="'var(--app-' + informe.color + ')'">
               </ion-icon>
               <div class="flex flex-col gap-1 flex-1">
                 <span class="text-sm font-bold" style="color: var(--app-text)">{{ informe.nombre }}</span>
                 <span class="text-xs" style="color: var(--app-text-muted)">{{ informe.descripcion }}</span>
               </div>
-              <ion-icon name="chevron-forward-outline" style="color: var(--app-text-muted)"></ion-icon>
+              <ion-icon name="chevron-forward-outline" style="color: var(--app-text-muted)" aria-hidden="true"></ion-icon>
             </ion-card-content>
           </ion-card>
         }
       </div>
     } @else {
       @if (loading) {
-        <div class="flex justify-center py-8">
-          <ion-spinner name="crescent"></ion-spinner>
+        <div class="flex justify-center py-8" role="status" aria-live="polite">
+          <ion-spinner name="crescent" aria-label="Cargando"></ion-spinner>
+          <span class="ion-sr-only">Cargando informe…</span>
         </div>
       } @else if (datosInforme) {
         <!-- Ejecutivo -->
@@ -111,15 +112,15 @@
               <div class="grid grid-cols-3 gap-2">
                 <div class="flex flex-col items-center">
                   <span class="text-lg font-bold" style="color: var(--app-primary)">{{ datosInforme.capturas?.c1 ?? 0 }}</span>
-                  <span class="text-[10px]" style="color: var(--app-text-muted)">C1</span>
+                  <span class="text-xs" style="color: var(--app-text-muted)">C1</span>
                 </div>
                 <div class="flex flex-col items-center">
                   <span class="text-lg font-bold" style="color: var(--app-success)">{{ datosInforme.capturas?.c2 ?? 0 }}</span>
-                  <span class="text-[10px]" style="color: var(--app-text-muted)">C2</span>
+                  <span class="text-xs" style="color: var(--app-text-muted)">C2</span>
                 </div>
                 <div class="flex flex-col items-center">
                   <span class="text-lg font-bold" style="color: var(--app-warning)">{{ datosInforme.capturas?.c3 ?? 0 }}</span>
-                  <span class="text-[10px]" style="color: var(--app-text-muted)">C3</span>
+                  <span class="text-xs" style="color: var(--app-text-muted)">C3</span>
                 </div>
               </div>
             </div>
@@ -137,7 +138,7 @@
               <div class="grid grid-cols-2 gap-2 text-xs" style="color: var(--app-text-muted)">
                 <span>Codigo:</span><span class="font-bold">{{ datosInforme.cierre.codigo }}</span>
                 <span>Tienda:</span><span>{{ datosInforme.cierre.tienda }}</span>
-                <span>Hash:</span><span class="text-[9px] font-mono break-all">{{ datosInforme.cierre.hash_cabecera }}</span>
+                <span>Hash:</span><span class="text-xs font-mono break-all">{{ datosInforme.cierre.hash_cabecera }}</span>
               </div>
               <div class="flex gap-2 mt-3">
                 <ion-button class="btn-primary" (click)="downloadPdf()">
@@ -157,6 +158,10 @@
                 <ion-item lines="none" class="ion-no-padding">
                   <ion-input
                     placeholder="Correos destinatarios (separar con coma o punto y coma)"
+                    aria-label="Correos destinatarios"
+                    type="email"
+                    inputmode="email"
+                    autocomplete="email"
                     [(ngModel)]="emailDestinatarios"
                     [disabled]="enviandoCorreo"
                     class="text-xs"
@@ -238,8 +243,8 @@
                   <div class="flex items-center justify-between py-1 border-b" style="border-color: var(--app-border)">
                     <span class="text-xs" style="color: var(--app-text-muted)">{{ dept.categoria }}</span>
                     <div class="flex items-center gap-2">
-                      <span class="text-[10px]" style="color: var(--app-success)">{{ dept.conformes }}OK</span>
-                      <span class="text-[10px]" style="color: var(--app-danger)">{{ dept.diferencias }}DIF</span>
+                      <span class="text-xs" style="color: var(--app-success)">{{ dept.conformes }}OK</span>
+                      <span class="text-xs" style="color: var(--app-danger)">{{ dept.diferencias }}DIF</span>
                     </div>
                   </div>
                 }
@@ -256,15 +261,15 @@
               <div class="grid grid-cols-3 gap-2">
                 <div class="flex flex-col items-center">
                   <span class="text-lg font-bold" style="color: var(--app-primary)">{{ datosInforme.resumen.total_tags }}</span>
-                  <span class="text-[10px]" style="color: var(--app-text-muted)">Total</span>
+                  <span class="text-xs" style="color: var(--app-text-muted)">Total</span>
                 </div>
                 <div class="flex flex-col items-center">
                   <span class="text-lg font-bold" style="color: var(--app-success)">{{ datosInforme.resumen.tags_activos }}</span>
-                  <span class="text-[10px]" style="color: var(--app-text-muted)">Activos</span>
+                  <span class="text-xs" style="color: var(--app-text-muted)">Activos</span>
                 </div>
                 <div class="flex flex-col items-center">
                   <span class="text-lg font-bold" style="color: var(--app-danger)">{{ datosInforme.resumen.tags_anulados }}</span>
-                  <span class="text-[10px]" style="color: var(--app-text-muted)">Anulados</span>
+                  <span class="text-xs" style="color: var(--app-text-muted)">Anulados</span>
                 </div>
               </div>
             </div>
@@ -291,29 +296,29 @@
               <div class="grid grid-cols-3 gap-2 mb-3">
                 <div class="flex flex-col items-center">
                   <span class="text-lg font-bold" style="color: var(--app-primary)">{{ datosInforme.resumen.total_c1 | number:'1.0-0' }}</span>
-                  <span class="text-[10px]" style="color: var(--app-text-muted)">C1</span>
+                  <span class="text-xs" style="color: var(--app-text-muted)">C1</span>
                 </div>
                 <div class="flex flex-col items-center">
                   <span class="text-lg font-bold" style="color: var(--app-success)">{{ datosInforme.resumen.total_c2 | number:'1.0-0' }}</span>
-                  <span class="text-[10px]" style="color: var(--app-text-muted)">C2</span>
+                  <span class="text-xs" style="color: var(--app-text-muted)">C2</span>
                 </div>
                 <div class="flex flex-col items-center">
                   <span class="text-lg font-bold" style="color: var(--app-warning)">{{ datosInforme.resumen.total_c3 | number:'1.0-0' }}</span>
-                  <span class="text-[10px]" style="color: var(--app-text-muted)">C3</span>
+                  <span class="text-xs" style="color: var(--app-text-muted)">C3</span>
                 </div>
               </div>
               <div class="grid grid-cols-3 gap-2">
                 <div class="flex flex-col items-center">
                   <span class="text-sm font-bold" style="color: var(--app-success)">{{ datosInforme.resumen.confirmados }}</span>
-                  <span class="text-[10px]" style="color: var(--app-text-muted)">Confirmados</span>
+                  <span class="text-xs" style="color: var(--app-text-muted)">Confirmados</span>
                 </div>
                 <div class="flex flex-col items-center">
                   <span class="text-sm font-bold" style="color: var(--app-warning)">{{ datosInforme.resumen.modificados }}</span>
-                  <span class="text-[10px]" style="color: var(--app-text-muted)">Modificados</span>
+                  <span class="text-xs" style="color: var(--app-text-muted)">Modificados</span>
                 </div>
                 <div class="flex flex-col items-center">
                   <span class="text-sm font-bold" style="color: var(--app-text-muted)">{{ datosInforme.resumen.pendientes }}</span>
-                  <span class="text-[10px]" style="color: var(--app-text-muted)">Pendientes</span>
+                  <span class="text-xs" style="color: var(--app-text-muted)">Pendientes</span>
                 </div>
               </div>
             </div>

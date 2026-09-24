@@ -13,37 +13,42 @@
 
     <div class="flex flex-col gap-4">
       <div class="flex flex-col gap-2">
-        <label class="field-label">RUT</label>
+        <label class="field-label" for="login-rut">RUT</label>
         <ion-input
+          id="login-rut"
           class="input-base"
+          aria-label="RUT"
           placeholder="Ej: 12345678-5"
           inputmode="text"
           enterkeyhint="next"
           maxlength="12"
           autocomplete="username"
+          [attr.aria-invalid]="errorMessage() && !rut() ? 'true' : null"
           [value]="rut()"
-          (ionInput)="rut.set($event.detail.value!)"
+          (ionInput)="rut.set($event.detail.value!); clearError()"
           (keyup.enter)="onLogin()"
         ></ion-input>
       </div>
 
       <div class="flex flex-col gap-2">
-        <label class="field-label">Contraseña</label>
+        <label class="field-label" for="login-password">Contraseña</label>
         <ion-input
+          id="login-password"
           class="input-base"
+          aria-label="Contraseña"
           type="password"
           placeholder="••••••"
           enterkeyhint="go"
           autocomplete="current-password"
           [value]="password()"
-          (ionInput)="password.set($event.detail.value!)"
+          (ionInput)="password.set($event.detail.value!); clearError()"
           (keyup.enter)="onLogin()"
         ></ion-input>
       </div>
 
       @if (errorMessage()) {
-        <div class="error-pill">
-          <ion-icon name="alert-circle-outline"></ion-icon>
+        <div class="error-pill" id="login-error" role="alert" aria-live="assertive">
+          <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
           <span>{{ errorMessage() }}</span>
         </div>
       }

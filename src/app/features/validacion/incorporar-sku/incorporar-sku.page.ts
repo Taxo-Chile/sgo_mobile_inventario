@@ -37,15 +37,19 @@ type ProductoEncontrado = ProductoBuscado;
         <div class="flex flex-col gap-4">
           <!-- Buscar producto -->
           <div class="flex flex-col gap-2">
-            <label class="field-label">Buscar SKU / Código de barras</label>
+            <label class="field-label" for="sku-busqueda">Buscar SKU / Código de barras</label>
             <div class="flex gap-2">
               <ion-input
+                id="sku-busqueda"
                 class="input-base flex-1"
+                aria-label="Buscar SKU o código de barras"
                 type="text"
                 inputmode="text"
                 enterkeyhint="search"
                 maxlength="15"
                 placeholder="Ej: 9010696"
+                [attr.aria-invalid]="busquedaError() ? 'true' : null"
+                [attr.aria-describedby]="busquedaError() ? 'sku-busqueda-error' : null"
                 [value]="busqueda()"
                 (ionInput)="onBusquedaInput($event)"
                 (keyup.enter)="buscarProducto()"
@@ -53,15 +57,16 @@ type ProductoEncontrado = ProductoBuscado;
               <ion-button class="btn-outline" fill="outline" (click)="buscarProducto()" [disabled]="buscando() || !busqueda().trim()">
                 @if (buscando()) {
                   <ion-spinner name="crescent"></ion-spinner>
+                  <span class="ion-sr-only">Buscando…</span>
                 } @else {
-                  <ion-icon name="search-outline" slot="start"></ion-icon>
+                  <ion-icon name="search-outline" slot="start" aria-hidden="true"></ion-icon>
                   Buscar
                 }
               </ion-button>
             </div>
             @if (busquedaError()) {
-              <div class="error-pill">
-                <ion-icon name="alert-circle-outline"></ion-icon>
+              <div class="error-pill" id="sku-busqueda-error" role="alert" aria-live="assertive">
+                <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
                 <span>{{ busquedaError() }}</span>
               </div>
             }
@@ -70,19 +75,28 @@ type ProductoEncontrado = ProductoBuscado;
           <!-- Resultados de búsqueda -->
           @if (productosEncontrados().length > 0) {
             <div class="flex flex-col gap-2">
-              <span class="field-label">Seleccionar producto</span>
-              <div class="flex flex-col gap-2" style="max-height: 240px; overflow-y: auto;">
+              <span class="field-label" id="sku-resultados-label">Seleccionar producto</span>
+              <div class="flex flex-col gap-2" style="max-height: 240px; overflow-y: auto;" role="listbox" aria-labelledby="sku-resultados-label">
                 @for (prod of productosEncontrados(); track prod.id_producto) {
                   <button
                     type="button"
+                    role="option"
                     class="card p-3 text-left w-full"
                     style="cursor: pointer;"
+                    [attr.aria-selected]="productoSeleccionado()?.id_producto === prod.id_producto"
                     [style.background]="productoSeleccionado()?.id_producto === prod.id_producto ? 'var(--app-success-bg)' : 'var(--app-surface)'"
                     [style.border-color]="productoSeleccionado()?.id_producto === prod.id_producto ? 'var(--app-success-border)' : 'var(--app-border)'"
                     (click)="seleccionarProducto(prod)"
                   >
-                    <div class="font-bold" style="color: var(--app-text)">{{ prod.sku }}</div>
-                    <div class="text-xs" style="color: var(--app-text-muted)">{{ prod.descripcion_producto }}</div>
+                    <div class="flex items-start justify-between gap-2">
+                      <div>
+                        <div class="font-bold" style="color: var(--app-text)">{{ prod.sku }}</div>
+                        <div class="text-xs" style="color: var(--app-text-muted)">{{ prod.descripcion_producto }}</div>
+                      </div>
+                      @if (productoSeleccionado()?.id_producto === prod.id_producto) {
+                        <span class="badge-status badge-completed">Seleccionado</span>
+                      }
+                    </div>
                   </button>
                 }
               </div>
@@ -100,20 +114,25 @@ type ProductoEncontrado = ProductoBuscado;
 
           <!-- Cantidad -->
           <div class="flex flex-col gap-2">
-            <label class="field-label">Cantidad</label>
+            <label class="field-label" for="sku-cantidad">Cantidad</label>
             <ion-input
+              id="sku-cantidad"
               class="input-base"
+              aria-label="Cantidad"
               type="number"
               inputmode="numeric"
               enterkeyhint="next"
               min="0"
+              maxlength="7"
               placeholder="0"
+              [attr.aria-invalid]="cantidadError() ? 'true' : null"
+              [attr.aria-describedby]="cantidadError() ? 'sku-cantidad-error' : null"
               [value]="cantidad()"
               (ionInput)="onCantidadInput($event)"
             ></ion-input>
             @if (cantidadError()) {
-              <div class="error-pill">
-                <ion-icon name="alert-circle-outline"></ion-icon>
+              <div class="error-pill" id="sku-cantidad-error" role="alert" aria-live="assertive">
+                <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
                 <span>{{ cantidadError() }}</span>
               </div>
             }
@@ -121,8 +140,8 @@ type ProductoEncontrado = ProductoBuscado;
 
           <!-- Unidad de medida -->
           <div class="flex flex-col gap-2">
-            <label class="field-label">Unidad de medida</label>
-            <ion-select [(ngModel)]="unidadMedida" placeholder="Seleccionar" class="input-base" interface="popover">
+            <label class="field-label" for="sku-unidad">Unidad de medida</label>
+            <ion-select id="sku-unidad" aria-label="Unidad de medida" [(ngModel)]="unidadMedida" placeholder="Seleccionar" class="input-base" interface="popover">
               <ion-select-option value="UN">UN</ion-select-option>
               <ion-select-option value="BLS">BLS</ion-select-option>
               <ion-select-option value="KG">KG</ion-select-option>
@@ -134,18 +153,22 @@ type ProductoEncontrado = ProductoBuscado;
 
           <!-- Motivo -->
           <div class="flex flex-col gap-2">
-            <label class="field-label">Motivo de incorporación</label>
+            <label class="field-label" for="sku-motivo">Motivo de incorporación</label>
             <ion-textarea
+              id="sku-motivo"
               class="input-base"
+              aria-label="Motivo de incorporación"
               placeholder="Ej: Producto no detectado en conteo PDA"
+              [attr.aria-invalid]="motivoError() ? 'true' : null"
+              [attr.aria-describedby]="motivoError() ? 'sku-motivo-error' : null"
               [value]="motivo()"
               (ionInput)="onMotivoInput($event)"
               [autoGrow]="true"
               [rows]="3"
             ></ion-textarea>
             @if (motivoError()) {
-              <div class="error-pill">
-                <ion-icon name="alert-circle-outline"></ion-icon>
+              <div class="error-pill" id="sku-motivo-error" role="alert" aria-live="assertive">
+                <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
                 <span>{{ motivoError() }}</span>
               </div>
             }
@@ -271,15 +294,18 @@ export class IncorporarSkuPage implements OnInit {
 
     if (!prod) {
       this.busquedaError.set('Selecciona un producto de la lista');
+      this.focusById('sku-busqueda');
       return;
     }
     const cantidad = this.cantidad();
     if (cantidad === null || Number.isNaN(cantidad) || cantidad <= 0) {
       this.cantidadError.set('Ingresa una cantidad válida (máx. 7 dígitos)');
+      this.focusById('sku-cantidad');
       return;
     }
     if (!this.motivo().trim()) {
       this.motivoError.set('Ingresa un motivo de incorporación');
+      this.focusById('sku-motivo');
       return;
     }
 
@@ -319,5 +345,11 @@ export class IncorporarSkuPage implements OnInit {
         this.notification.error(err?.message || 'Error al incorporar SKU. Intente nuevamente.');
       },
     });
+  }
+
+  private focusById(id: string) {
+    const el = document.getElementById(id);
+    el?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    (el as HTMLElement | null)?.focus?.();
   }
 }

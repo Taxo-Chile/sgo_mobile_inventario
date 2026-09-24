@@ -12,8 +12,9 @@
 
   <div class="page-inner">
     @if (loading()) {
-      <div class="flex justify-center py-8">
-        <ion-spinner name="crescent"></ion-spinner>
+      <div class="flex justify-center py-8" role="status" aria-live="polite">
+        <ion-spinner name="crescent" aria-label="Cargando"></ion-spinner>
+        <span class="ion-sr-only">Cargando cierres…</span>
       </div>
     } @else {
       <div class="flex flex-col gap-2 mb-4">
@@ -50,9 +51,9 @@
           }
         </div>
       } @else {
-        <div class="card p-4 mb-3" style="opacity: 0.6;">
+        <div class="card p-4 mb-3">
           <div class="flex items-center gap-3">
-            <ion-icon name="analytics-outline" class="text-2xl" style="color: var(--app-text-muted)"></ion-icon>
+            <ion-icon name="analytics-outline" class="text-2xl" style="color: var(--app-text-muted)" aria-hidden="true"></ion-icon>
             <div class="flex flex-col gap-1 flex-1">
               <span class="text-sm font-bold" style="color: var(--app-text-muted)">Pre Variance</span>
               <span class="text-xs" style="color: var(--app-text-muted)">Sin datos</span>
@@ -66,7 +67,8 @@
         <div class="card p-4 mb-3">
           <div class="flex items-center gap-3 mb-3">
             <ion-icon name="calculator-outline" class="text-2xl"
-              [style.color]="'var(--app-' + getEstadoColor(rc.estado) + ')'">
+              [style.color]="'var(--app-' + getEstadoColor(rc.estado) + ')'"
+              aria-hidden="true">
             </ion-icon>
             <div class="flex flex-col gap-1 flex-1">
               <span class="text-sm font-bold" style="color: var(--app-text)">Recuento</span>
@@ -90,9 +92,9 @@
           }
         </div>
       } @else {
-        <div class="card p-4 mb-3" style="opacity: 0.6;">
+        <div class="card p-4 mb-3">
           <div class="flex items-center gap-3">
-            <ion-icon name="calculator-outline" class="text-2xl" style="color: var(--app-text-muted)"></ion-icon>
+            <ion-icon name="calculator-outline" class="text-2xl" style="color: var(--app-text-muted)" aria-hidden="true"></ion-icon>
             <div class="flex flex-col gap-1 flex-1">
               <span class="text-sm font-bold" style="color: var(--app-text-muted)">Recuento</span>
               <span class="text-xs" style="color: var(--app-text-muted)">Sin datos</span>
@@ -156,9 +158,9 @@
           </div>
         </div>
       } @else {
-        <div class="card p-4 mb-3" style="opacity: 0.6;">
+        <div class="card p-4 mb-3">
           <div class="flex items-center gap-3">
-            <ion-icon name="lock-closed-outline" class="text-2xl" style="color: var(--app-text-muted)"></ion-icon>
+            <ion-icon name="lock-closed-outline" class="text-2xl" style="color: var(--app-text-muted)" aria-hidden="true"></ion-icon>
             <div class="flex flex-col gap-1 flex-1">
               <span class="text-sm font-bold" style="color: var(--app-text-muted)">Cierre Final</span>
               <span class="text-xs" style="color: var(--app-text-muted)">Pendiente de cierre por encargado</span>

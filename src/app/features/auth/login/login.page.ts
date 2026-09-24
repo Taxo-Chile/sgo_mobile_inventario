@@ -24,6 +24,10 @@ export class LoginPage {
   loading = signal(false);
   errorMessage = signal('');
 
+  clearError() {
+    if (this.errorMessage()) this.errorMessage.set('');
+  }
+
   ionViewWillEnter() {
     if (this.authState.isLoggedIn()) {
       this.router.navigate(['/home'], { replaceUrl: true });
@@ -36,6 +40,7 @@ export class LoginPage {
 
     if (!rut || !password) {
       this.errorMessage.set('Ingresa RUT y contraseña');
+      this.focusFirstInvalid(rut, password);
       return;
     }
 
@@ -43,18 +48,21 @@ export class LoginPage {
     const rutLimpio = rut.replace(/[^0-9kK]/g, '');
     if (rutLimpio.length < 8 || rutLimpio.length > 9) {
       this.errorMessage.set('RUT invalido. Ejemplo: 12345678-5');
+      this.focusRut();
       return;
     }
 
     // Validar que termine en guion + verificador
     if (!rut.includes('-')) {
       this.errorMessage.set('RUT debe incluir guion y digito verificador');
+      this.focusRut();
       return;
     }
 
     // Validar password minimo 6 caracteres
     if (password.length < 6) {
       this.errorMessage.set('La contraseña debe tener al menos 6 caracteres');
+      this.focusPassword();
       return;
     }
 
@@ -71,5 +79,22 @@ export class LoginPage {
         this.errorMessage.set(err.message || 'Error al iniciar sesión');
       },
     });
+  }
+
+  private focusRut() {
+    const el = document.getElementById('login-rut');
+    el?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    (el as HTMLElement | null)?.focus?.();
+  }
+
+  private focusPassword() {
+    const el = document.getElementById('login-password');
+    el?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    (el as HTMLElement | null)?.focus?.();
+  }
+
+  private focusFirstInvalid(rut: string, password: string) {
+    if (!rut) this.focusRut();
+    else this.focusPassword();
   }
 }

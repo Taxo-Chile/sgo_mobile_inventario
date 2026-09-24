@@ -100,10 +100,12 @@ export class CaptureValidationPage implements OnInit {
       const cantidad = this.c2Cantidad();
       if (cantidad === null || Number.isNaN(cantidad) || cantidad < 0) {
         this.campoError.set('Ingresa una cantidad válida (máx. 7 dígitos)');
+        this.focusById('c2-cantidad');
         return;
       }
       if (!this.motivo().trim()) {
         this.motivoError.set('Ingresa un motivo de modificación');
+        this.focusById('motivo-modificacion');
         return;
       }
       this.validacionState.modificarCaptura(captura.id_conteo_det_c1, cantidad, this.motivo().trim());
@@ -143,5 +145,11 @@ export class CaptureValidationPage implements OnInit {
     } else {
       this.router.navigate(['/home']);
     }
+  }
+
+  private focusById(id: string) {
+    const el = document.getElementById(id);
+    el?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    (el as HTMLElement | null)?.focus?.();
   }
 }

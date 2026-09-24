@@ -65,6 +65,7 @@
         <ion-label style="color: var(--app-text-muted); font-size: 0.75rem;">Fecha</ion-label>
         <ion-input
           type="date"
+          aria-label="Fecha de la agenda"
           [value]="selectedDate()"
           (ionChange)="onDateChange($event)"
           class="date-filter"
@@ -75,6 +76,7 @@
         <ion-icon name="storefront-outline" slot="start" style="color: var(--app-primary)"></ion-icon>
         <ion-label style="color: var(--app-text-muted); font-size: 0.75rem;">Tienda</ion-label>
         <ion-select
+          aria-label="Tienda"
           [value]="selectedTienda()"
           (ionChange)="onTiendaChange($event)"
           interface="popover"
@@ -89,8 +91,9 @@
     </div>
 
     @if (loading()) {
-      <div class="flex justify-center py-12">
-        <ion-spinner name="crescent"></ion-spinner>
+      <div class="flex justify-center py-12" role="status" aria-live="polite">
+        <ion-spinner name="crescent" aria-label="Cargando"></ion-spinner>
+        <span class="ion-sr-only">Cargando agendas…</span>
       </div>
     } @else if (filteredAgendas().length === 0) {
       <div class="flex flex-col items-center py-16 gap-4">

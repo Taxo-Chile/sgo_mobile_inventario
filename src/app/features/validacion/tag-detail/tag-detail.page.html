@@ -12,8 +12,9 @@
 
   <div class="page-inner">
     @if (loading()) {
-      <div class="flex justify-center py-8">
-        <ion-spinner name="crescent"></ion-spinner>
+      <div class="flex justify-center py-8" role="status" aria-live="polite">
+        <ion-spinner name="crescent" aria-label="Cargando"></ion-spinner>
+        <span class="ion-sr-only">Cargando TAG…</span>
       </div>
     } @else if (validacionTAG(); as validacion) {
       <!-- Header del TAG -->
@@ -53,12 +54,12 @@
         </div>
       } @else {
         <div class="flex gap-2 mb-4">
-          <ion-button fill="outline" color="medium" class="flex-1" (click)="confirmarAnular()">
-            <ion-icon name="trash-outline" slot="start"></ion-icon>
+          <ion-button fill="outline" color="medium" class="btn-outline flex-1" aria-label="Anular TAG" (click)="confirmarAnular()">
+            <ion-icon name="trash-outline" slot="start" aria-hidden="true"></ion-icon>
             Anular TAG
           </ion-button>
-          <ion-button fill="outline" color="medium" class="flex-1" (click)="abrirCrearTAG()">
-            <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+          <ion-button fill="outline" color="medium" class="btn-outline flex-1" aria-label="Crear TAG" (click)="abrirCrearTAG()">
+            <ion-icon name="add-circle-outline" slot="start" aria-hidden="true"></ion-icon>
             Crear TAG
           </ion-button>
         </div>
@@ -108,11 +109,14 @@
                     </div>
                     <div class="flex items-center gap-1">
                       @if (captura.estado === 'CONFIRMADA') {
-                        <ion-icon name="checkmark-circle" class="text-xl" style="color: var(--app-success)"></ion-icon>
+                        <ion-icon name="checkmark-circle" class="text-xl" style="color: var(--app-success)" aria-hidden="true"></ion-icon>
+                        <span class="text-xs font-semibold" style="color: var(--app-success)">Confirmada</span>
                       } @else if (captura.estado === 'MODIFICADA') {
-                        <ion-icon name="create" class="text-xl" style="color: var(--app-warning)"></ion-icon>
+                        <ion-icon name="create" class="text-xl" style="color: var(--app-warning)" aria-hidden="true"></ion-icon>
+                        <span class="text-xs font-semibold" style="color: var(--app-warning)">Modificada</span>
                       } @else {
-                        <ion-icon name="chevron-forward" class="text-lg" style="color: var(--app-text-muted)"></ion-icon>
+                        <ion-icon name="chevron-forward" class="text-lg" style="color: var(--app-text-muted)" aria-hidden="true"></ion-icon>
+                        <span class="text-xs" style="color: var(--app-text-muted)">Pendiente</span>
                       }
                     </div>
                   </div>

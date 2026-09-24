@@ -12,13 +12,13 @@
   
   <div class="page-inner">
     @if (loading()) {
-      <div class="loading-container">
-        <ion-spinner name="crescent"></ion-spinner>
+      <div class="loading-container" role="status" aria-live="polite">
+        <ion-spinner name="crescent" aria-label="Cargando"></ion-spinner>
         <p>Cargando zonificacion...</p>
       </div>
     } @else if (error()) {
-      <div class="error-container">
-        <ion-icon name="alert-circle-outline" color="danger"></ion-icon>
+      <div class="error-container" role="alert">
+        <ion-icon name="alert-circle-outline" color="danger" aria-hidden="true"></ion-icon>
         <p>{{ error() }}</p>
         <ion-button (click)="goBack()">Volver</ion-button>
       </div>
@@ -77,7 +77,7 @@
           <ion-icon name="document-text-outline"></ion-icon>
           <span>Descargar Excel</span>
         </button>
-        <button class="btn-action-secondary flex-1" (click)="downloadPdf()">
+        <button class="btn-action btn-action-secondary flex-1" (click)="downloadPdf()">
           <ion-icon name="print-outline"></ion-icon>
           <span>Imprimir / PDF</span>
         </button>
