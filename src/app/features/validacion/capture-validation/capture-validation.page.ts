@@ -27,6 +27,9 @@ export class CaptureValidationPage implements OnInit {
   c2Cantidad = signal<number | null>(null);
   motivo = signal('');
   modo = signal<'CONFIRMAR' | 'MODIFICAR'>('CONFIRMAR');
+  campoError = signal('');
+  motivoError = signal('');
+  guardando = signal(false);
   agendaId = 0;
   tagId = 0;
 
@@ -56,6 +59,8 @@ export class CaptureValidationPage implements OnInit {
 
   setModo(modo: 'CONFIRMAR' | 'MODIFICAR') {
     this.modo.set(modo);
+    this.campoError.set('');
+    this.motivoError.set('');
     if (modo === 'CONFIRMAR') {
       this.c2Cantidad.set(this.captura()?.c1_cantidad ?? null);
       this.motivo.set('');
@@ -64,25 +69,47 @@ export class CaptureValidationPage implements OnInit {
     }
   }
 
+  onCantidadInput(event: CustomEvent<{ value?: string | number | null }>) {
+    const raw = event.detail.value;
+    const asString = raw === null || raw === undefined ? '' : String(raw).trim();
+    const digits = asString.replace(/[^\d.]/g, '');
+    if (digits.length > 7) {
+      const limited = digits.slice(0, 7);
+      this.c2Cantidad.set(limited === '' ? null : Number(limited));
+      return;
+    }
+    this.c2Cantidad.set(asString === '' || asString === '.' ? null : Number(digits));
+    if (this.campoError()) this.campoError.set('');
+  }
+
+  onMotivoInput(event: CustomEvent<{ value?: string | null }>) {
+    this.motivo.set(event.detail.value ?? '');
+    if (this.motivoError()) this.motivoError.set('');
+  }
+
   guardar() {
     const captura = this.captura();
-    if (!captura) return;
+    if (!captura || this.guardando()) return;
+
+    this.campoError.set('');
+    this.motivoError.set('');
 
     if (this.modo() === 'CONFIRMAR') {
       this.validacionState.confirmarCaptura(captura.id_conteo_det_c1);
     } else {
       const cantidad = this.c2Cantidad();
-      if (cantidad === null || cantidad < 0) {
-        this.notification.error('Ingresa una cantidad válida');
+      if (cantidad === null || Number.isNaN(cantidad) || cantidad < 0) {
+        this.campoError.set('Ingresa una cantidad válida (máx. 7 dígitos)');
         return;
       }
       if (!this.motivo().trim()) {
-        this.notification.error('Ingresa un motivo de modificación');
+        this.motivoError.set('Ingresa un motivo de modificación');
         return;
       }
       this.validacionState.modificarCaptura(captura.id_conteo_det_c1, cantidad, this.motivo().trim());
     }
 
+    this.guardando.set(true);
     const allCapturas = this.validacionState.capturas();
     const resultado: ValidationResult = {
       agenda_id: this.agendaId,
@@ -99,10 +126,12 @@ export class CaptureValidationPage implements OnInit {
 
     this.validacionRepo.guardarValidacion(resultado).subscribe({
       next: () => {
+        this.guardando.set(false);
         this.notification.success(this.modo() === 'CONFIRMAR' ? 'Captura confirmada' : 'Captura modificada');
         this.router.navigate(['/agenda', this.agendaId, 'tag', this.tagId]);
       },
       error: (err) => {
+        this.guardando.set(false);
         this.notification.error(err?.message || 'Error al guardar. Intente nuevamente.');
       },
     });

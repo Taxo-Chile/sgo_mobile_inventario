@@ -6,7 +6,6 @@ import { GetTAGDetalleUseCase } from '../../../application/validacion/get-tag-de
 import { NotificationService } from '../../../shared/services/notification.service';
 import { ConnectivityBannerComponent } from '../../../shared/components/connectivity-banner/connectivity-banner.component';
 import { ValidacionCaptura } from '../../../domain/validacion/models/validacion.model';
-import { IncorporarSkuModalComponent } from '../../../shared/components/incorporar-sku-modal/incorporar-sku-modal.component';
 import { CrearTagModalComponent } from '../../../shared/components/crear-tag-modal/crear-tag-modal.component';
 import { VALIDACION_REPOSITORY } from '../../../core/tokens/repository.tokens';
 import { ValidacionRepository } from '../../../domain/validacion/repositories/validacion.repository';
@@ -101,22 +100,10 @@ export class TagDetailPage implements OnInit {
     this.router.navigate(['/agenda', this.agendaId]);
   }
 
-  async openIncorporar() {
+  openIncorporar() {
     const tag = this.validacionTAG()?.tag;
     if (!tag) return;
-
-    const modal = await this.modalCtrl.create({
-      component: IncorporarSkuModalComponent,
-      componentProps: { agendaId: this.agendaId, tagId: tag.id_tag, tagTipo: tag.tipo_validacion },
-    });
-
-    await modal.present();
-
-    const { data } = await modal.onWillDismiss();
-    if (data) {
-      this.validacionState.agregarCaptura(data);
-      this.notification.success('SKU incorporado correctamente');
-    }
+    this.router.navigate(['/agenda', this.agendaId, 'tag', tag.id_tag, 'incorporar']);
   }
 
   async confirmarReactivar() {

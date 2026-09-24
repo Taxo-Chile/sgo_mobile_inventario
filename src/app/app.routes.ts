@@ -30,6 +30,14 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: 'agenda/:agendaId/tag/:tagId/incorporar',
+    loadComponent: () =>
+      import('./features/validacion/incorporar-sku/incorporar-sku.page').then(
+        (m) => m.IncorporarSkuPage
+      ),
+    canActivate: [authGuard],
+  },
+  {
     path: 'agenda/:agendaId/tag/:tagId/capture/:capturaId',
     loadComponent: () =>
       import('./features/validacion/capture-validation/capture-validation.page').then(

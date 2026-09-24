@@ -105,11 +105,16 @@ export class RecuentoPage implements OnInit {
           text: 'Guardar',
           cssClass: 'primary',
           handler: (data) => {
-            const nuevaCantidad = parseFloat(data.cantidad);
+            const raw = String(data.cantidad ?? '').trim();
+            if (raw.length > 7) {
+              this.notification.error('La cantidad no puede superar 7 dígitos');
+              return false;
+            }
+            const nuevaCantidad = parseFloat(raw);
             const motivo = (data.motivo || '').trim();
 
             if (isNaN(nuevaCantidad) || nuevaCantidad < 0) {
-              this.notification.error('Ingrese una cantidad válida');
+              this.notification.error('Ingrese una cantidad válida (máx. 7 dígitos)');
               return false;
             }
 

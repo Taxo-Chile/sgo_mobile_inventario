@@ -50,10 +50,19 @@
             <ion-input
               class="input-base"
               type="number"
+              inputmode="numeric"
+              enterkeyhint="next"
+              min="0"
               placeholder="Ingresa cantidad"
               [value]="c2Cantidad()"
-              (ionInput)="c2Cantidad.set(+$event.detail.value!)"
+              (ionInput)="onCantidadInput($event)"
             ></ion-input>
+            @if (campoError()) {
+              <div class="error-pill">
+                <ion-icon name="alert-circle-outline"></ion-icon>
+                <span>{{ campoError() }}</span>
+              </div>
+            }
           </div>
 
           <div class="flex flex-col gap-2">
@@ -62,16 +71,25 @@
               class="input-base"
               placeholder="Describe el motivo..."
               [value]="motivo()"
-              (ionInput)="motivo.set($event.detail.value!)"
+              (ionInput)="onMotivoInput($event)"
               [autoGrow]="true"
               [rows]="3"
             ></ion-textarea>
+            @if (motivoError()) {
+              <div class="error-pill">
+                <ion-icon name="alert-circle-outline"></ion-icon>
+                <span>{{ motivoError() }}</span>
+              </div>
+            }
           </div>
         }
       </div>
 
-      <ion-button class="btn-primary" (click)="guardar()">
-        @if (modo() === 'CONFIRMAR') {
+      <ion-button class="btn-primary" [disabled]="guardando()" (click)="guardar()">
+        @if (guardando()) {
+          <ion-spinner name="crescent" slot="start"></ion-spinner>
+          Guardando...
+        } @else if (modo() === 'CONFIRMAR') {
           <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
           Confirmar Cantidad
         } @else {

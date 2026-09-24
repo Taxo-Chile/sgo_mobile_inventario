@@ -52,15 +52,15 @@
       <div class="grid grid-cols-3 gap-2 mb-4">
         <div class="card p-3 flex flex-col items-center gap-1">
           <span class="text-lg font-bold" style="color: var(--app-text-muted)">{{ totalPendientes() }}</span>
-          <span class="text-[10px]" style="color: var(--app-text-muted)">Pendientes</span>
+          <span class="text-xs" style="color: var(--app-text-muted)">Pendientes</span>
         </div>
         <div class="card p-3 flex flex-col items-center gap-1">
           <span class="text-lg font-bold" style="color: var(--app-success)">{{ totalAprobados() }}</span>
-          <span class="text-[10px]" style=" var(--app-text-muted)">Aprobados</span>
+          <span class="text-[11px]" style="color: var(--app-text-muted)">Aprobados</span>
         </div>
         <div class="card p-3 flex flex-col items-center gap-1">
           <span class="text-lg font-bold" style="color: var(--app-danger)">{{ totalRechazados() }}</span>
-          <span class="text-[10px]" style="color: var(--app-text-muted)">Rechazados</span>
+          <span class="text-xs" style="color: var(--app-text-muted)">Rechazados</span>
         </div>
       </div>
 
@@ -94,12 +94,12 @@
                   </div>
 
                   @if (!estaFinalizado() && producto.estado === 'PENDIENTE') {
-                    <div class="flex gap-2">
-                      <ion-button class="btn-primary btn-success" size="small" (click)="aprobarProducto(producto)">
+                    <div class="flex flex-col gap-2 sm:flex-row">
+                      <ion-button class="btn-primary btn-success flex-1" (click)="aprobarProducto(producto)">
                         <ion-icon name="checkmark-outline" slot="start"></ion-icon>
                         Aprobar
                       </ion-button>
-                      <ion-button class="btn-primary btn-danger" size="small" (click)="rechazarProducto(producto)">
+                      <ion-button class="btn-outline btn-danger flex-1" fill="outline" (click)="rechazarProducto(producto)">
                         <ion-icon name="close-outline" slot="start"></ion-icon>
                         Rechazar
                       </ion-button>

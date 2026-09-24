@@ -40,7 +40,7 @@
 
       <!-- Botones de accion segun estado -->
       @if (esFinalizado()) {
-        <div class="flex items-center gap-2 mb-4" style="background: #e8f5e9; padding: 12px; border-radius: 8px;">
+        <div class="flex items-center gap-2 mb-4" style="background: var(--app-success-bg); border: 1px solid var(--app-success-border); padding: 12px; border-radius: 8px;">
           <ion-icon name="checkmark-circle" style="color: var(--app-success); font-size: 20px;"></ion-icon>
           <span class="text-sm font-bold" style="color: var(--app-success)">TAG FINALIZADO - Solo lectura</span>
         </div>
@@ -68,15 +68,15 @@
       <div class="grid grid-cols-3 gap-2 mb-4">
         <div class="card p-3 flex flex-col items-center gap-1">
           <span class="text-lg font-bold" style="color: var(--app-text-muted)">{{ totalPendientes() }}</span>
-          <span class="text-[10px]" style="color: var(--app-text-muted)">Pendientes</span>
+          <span class="text-xs" style="color: var(--app-text-muted)">Pendientes</span>
         </div>
         <div class="card p-3 flex flex-col items-center gap-1">
           <span class="text-lg font-bold" style="color: var(--app-success)">{{ totalConfirmadas() }}</span>
-          <span class="text-[10px]" style="color: var(--app-text-muted)">Confirmadas</span>
+          <span class="text-xs" style="color: var(--app-text-muted)">Confirmadas</span>
         </div>
         <div class="card p-3 flex flex-col items-center gap-1">
           <span class="text-lg font-bold" style="color: var(--app-warning)">{{ totalModificadas() }}</span>
-          <span class="text-[10px]" style="color: var(--app-text-muted)">Modificadas</span>
+          <span class="text-xs" style="color: var(--app-text-muted)">Modificadas</span>
         </div>
       </div>
 

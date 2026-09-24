@@ -60,15 +60,15 @@
       <div class="grid grid-cols-3 gap-2 mb-4">
         <div class="card p-3 flex flex-col items-center gap-1">
           <span class="text-lg font-bold" style="color: var(--app-text-muted)">{{ totalPendientes() }}</span>
-          <span class="text-[10px]" style="color: var(--app-text-muted)">Pendientes</span>
+          <span class="text-xs" style="color: var(--app-text-muted)">Pendientes</span>
         </div>
         <div class="card p-3 flex flex-col items-center gap-1">
           <span class="text-lg font-bold" style="color: var(--app-warning)">{{ totalParciales() }}</span>
-          <span class="text-[10px]" style="color: var(--app-text-muted)">Parciales</span>
+          <span class="text-xs" style="color: var(--app-text-muted)">Parciales</span>
         </div>
         <div class="card p-3 flex flex-col items-center gap-1">
           <span class="text-lg font-bold" style="color: var(--app-success)">{{ totalRecontados() }}</span>
-          <span class="text-[10px]" style="color: var(--app-text-muted)">Recontados</span>
+          <span class="text-xs" style="color: var(--app-text-muted)">Recontados</span>
         </div>
       </div>
 
@@ -100,12 +100,12 @@
                 </div>
 
                 @if (!estaFinalizado() && producto.cantidad_c3 === null) {
-                  <div class="flex gap-2">
-                    <ion-button class="btn-primary btn-success" size="small" (click)="confirmarProducto(producto)">
+                  <div class="flex flex-col gap-2 sm:flex-row">
+                    <ion-button class="btn-primary btn-success flex-1" (click)="confirmarProducto(producto)">
                       <ion-icon name="checkmark-outline" slot="start"></ion-icon>
                       Confirmar C2
                     </ion-button>
-                    <ion-button class="btn-primary btn-warning" size="small" (click)="modificarProducto(producto)">
+                    <ion-button class="btn-outline btn-warning flex-1" fill="outline" (click)="modificarProducto(producto)">
                       <ion-icon name="create-outline" slot="start"></ion-icon>
                       Modificar
                     </ion-button>
@@ -136,15 +136,15 @@
           <div class="grid grid-cols-3 gap-2 mb-3">
             <div class="flex flex-col items-center">
               <span class="text-lg font-bold" style="color: var(--app-success)">{{ preview.total_recontados }}</span>
-              <span class="text-[10px]" style="color: var(--app-text-muted)">Recontados</span>
+              <span class="text-xs" style="color: var(--app-text-muted)">Recontados</span>
             </div>
             <div class="flex flex-col items-center">
               <span class="text-lg font-bold" style="color: var(--app-text-muted)">{{ preview.total_pendientes }}</span>
-              <span class="text-[10px]" style="color: var(--app-text-muted)">Pendientes</span>
+              <span class="text-xs" style="color: var(--app-text-muted)">Pendientes</span>
             </div>
             <div class="flex flex-col items-center">
               <span class="text-lg font-bold" style="color: var(--app-danger)">{{ preview.total_con_diferencia }}</span>
-              <span class="text-[10px]" style="color: var(--app-text-muted)">Con Diferencia</span>
+              <span class="text-xs" style="color: var(--app-text-muted)">Con Diferencia</span>
             </div>
           </div>
           <p class="text-xs" style="color: var(--app-text-muted)">
