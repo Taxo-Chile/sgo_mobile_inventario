@@ -37,12 +37,13 @@ type ProductoEncontrado = ProductoBuscado;
         <div class="flex flex-col gap-4">
           <!-- Buscar producto -->
           <div class="flex flex-col gap-2">
-            <label class="field-label" for="sku-busqueda">Buscar SKU / Código de barras</label>
+            <span class="field-label" id="sku-busqueda-label">Buscar SKU / Código de barras</span>
             <div class="flex gap-2">
               <ion-input
                 id="sku-busqueda"
                 class="input-base flex-1"
                 aria-label="Buscar SKU o código de barras"
+                aria-labelledby="sku-busqueda-label"
                 type="text"
                 inputmode="text"
                 enterkeyhint="search"
@@ -54,7 +55,7 @@ type ProductoEncontrado = ProductoBuscado;
                 (ionInput)="onBusquedaInput($event)"
                 (keyup.enter)="buscarProducto()"
               ></ion-input>
-              <ion-button class="btn-outline" fill="outline" (click)="buscarProducto()" [disabled]="buscando() || !busqueda().trim()">
+              <ion-button class="btn-outline" fill="outline" (click)="buscarProducto()" [disabled]="buscando()">
                 @if (buscando()) {
                   <ion-spinner name="crescent"></ion-spinner>
                   <span class="ion-sr-only">Buscando…</span>
@@ -114,11 +115,12 @@ type ProductoEncontrado = ProductoBuscado;
 
           <!-- Cantidad -->
           <div class="flex flex-col gap-2">
-            <label class="field-label" for="sku-cantidad">Cantidad</label>
+            <span class="field-label" id="sku-cantidad-label">Cantidad</span>
             <ion-input
               id="sku-cantidad"
               class="input-base"
               aria-label="Cantidad"
+              aria-labelledby="sku-cantidad-label"
               type="number"
               inputmode="numeric"
               enterkeyhint="next"
@@ -140,8 +142,8 @@ type ProductoEncontrado = ProductoBuscado;
 
           <!-- Unidad de medida -->
           <div class="flex flex-col gap-2">
-            <label class="field-label" for="sku-unidad">Unidad de medida</label>
-            <ion-select id="sku-unidad" aria-label="Unidad de medida" [(ngModel)]="unidadMedida" placeholder="Seleccionar" class="input-base" interface="popover">
+            <span class="field-label" id="sku-unidad-label">Unidad de medida</span>
+            <ion-select id="sku-unidad" aria-label="Unidad de medida" aria-labelledby="sku-unidad-label" [(ngModel)]="unidadMedida" placeholder="Seleccionar" class="input-base" interface="popover">
               <ion-select-option value="UN">UN</ion-select-option>
               <ion-select-option value="BLS">BLS</ion-select-option>
               <ion-select-option value="KG">KG</ion-select-option>
@@ -153,11 +155,12 @@ type ProductoEncontrado = ProductoBuscado;
 
           <!-- Motivo -->
           <div class="flex flex-col gap-2">
-            <label class="field-label" for="sku-motivo">Motivo de incorporación</label>
+            <span class="field-label" id="sku-motivo-label">Motivo de incorporación</span>
             <ion-textarea
               id="sku-motivo"
               class="input-base"
               aria-label="Motivo de incorporación"
+              aria-labelledby="sku-motivo-label"
               placeholder="Ej: Producto no detectado en conteo PDA"
               [attr.aria-invalid]="motivoError() ? 'true' : null"
               [attr.aria-describedby]="motivoError() ? 'sku-motivo-error' : null"

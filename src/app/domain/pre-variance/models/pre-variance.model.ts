@@ -1,11 +1,12 @@
 export interface PreVarianceProducto {
   id: number;
   id_tag: number;
+  numero_tag: number;
   id_producto: number;
   producto_nombre: string;
   producto_sku: string;
   precio_unitario: number;
-  numero_tag: number;
+  stock_teorico: number;
   cantidad_c1: number;
   cantidad_c2: number;
   diferencia: number;

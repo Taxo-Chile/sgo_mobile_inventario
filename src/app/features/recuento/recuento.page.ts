@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { CurrencyPipe, DecimalPipe } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IonicModule, AlertController } from '@ionic/angular';
 import { RecuentoState } from '../../state/recuento/recuento.state';
@@ -11,7 +11,7 @@ import { RecuentoProducto } from '../../domain/recuento/models/recuento.model';
 @Component({
   selector: 'app-recuento',
   standalone: true,
-  imports: [IonicModule, ConnectivityBannerComponent, CurrencyPipe, DecimalPipe],
+  imports: [IonicModule, ConnectivityBannerComponent, DecimalPipe],
   templateUrl: './recuento.page.html',
   styleUrls: ['./recuento.page.scss'],
 })

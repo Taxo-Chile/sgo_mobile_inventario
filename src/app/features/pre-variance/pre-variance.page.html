@@ -89,12 +89,13 @@
                   </div>
 
                   <div class="flex items-center justify-between text-xs" style="color: var(--app-text-muted)">
+                    <span>TAG: {{ producto.numero_tag || '—' }}</span>
                     <span>C1: {{ producto.cantidad_c1 | number:'1.0-3' }}</span>
                     <span>C2: {{ producto.cantidad_c2 | number:'1.0-3' }}</span>
                     <span>Diferencia: {{ producto.diferencia | number:'1.0-3' }}</span>
                   </div>
 
-                  @if (!estaFinalizado() && producto.estado === 'PENDIENTE') {
+                  @if (producto.id_tag > 0 && !estaFinalizado() && producto.estado === 'PENDIENTE') {
                     <div class="flex flex-col gap-2 sm:flex-row">
                       <ion-button class="btn-primary btn-success flex-1" (click)="aprobarProducto(producto)">
                         <ion-icon name="checkmark-outline" slot="start"></ion-icon>
@@ -105,7 +106,7 @@
                         Rechazar
                       </ion-button>
                     </div>
-                  } @else {
+                  } @else if (producto.id_tag > 0) {
                     <div class="flex items-center gap-2">
                       @if (producto.estado === 'APROBADO') {
                         <ion-icon name="checkmark-circle" class="text-xl" style="color: var(--app-success)"></ion-icon>
@@ -114,6 +115,11 @@
                         <ion-icon name="close-circle" class="text-xl" style="color: var(--app-danger)"></ion-icon>
                         <span class="text-xs font-bold" style="color: var(--app-danger)">Rechazado</span>
                       }
+                    </div>
+                  } @else {
+                    <div class="error-pill" role="status">
+                      <ion-icon name="information-circle-outline" aria-hidden="true"></ion-icon>
+                      <span>Sin TAG asignado — requiere agregar TAG en validación</span>
                     </div>
                   }
                 </ion-card-content>

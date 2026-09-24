@@ -25,6 +25,16 @@ describe('PreVarianceState', () => {
     state.clear();
   });
 
+  it('puedeFinalizar ignora productos sin tag', () => {
+    state.setPreVariance(null, [
+      producto({ id: 1, id_tag: 0, estado: 'PENDIENTE' }),
+      producto({ id: 2, id_tag: 50541, estado: 'APROBADO' }),
+    ]);
+
+    expect(state.totalPendientes()).toBe(0);
+    expect(state.puedeFinalizar()).toBeTrue();
+  });
+
   it('contadores pendientes/aprobados/rechazados', () => {
     state.setPreVariance(null, [
       producto({ id: 1, estado: 'PENDIENTE' }),
@@ -42,7 +52,7 @@ describe('PreVarianceState', () => {
   });
 
   it('aprobarProducto cambia estado y habilita finalizar si no quedan pendientes', () => {
-    state.setPreVariance(null, [producto({ id: 1 })]);
+    state.setPreVariance(null, [producto({ id: 1, id_tag: 10 })]);
     expect(state.puedeFinalizar()).toBeFalse();
 
     state.aprobarProducto(1);

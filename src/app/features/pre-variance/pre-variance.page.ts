@@ -97,14 +97,23 @@ export class PreVariancePage implements OnInit {
     this.guardando.set(true);
 
     const productosGuardados = this.productos()
-      .filter((p) => p.estado !== 'PENDIENTE')
-      .map((p) => ({
-        id_producto: p.id_producto,
-        id_tag: p.id_tag,
-        decision: p.estado as 'APROBADO' | 'RECHAZADO',
-        cantidad: p.estado === 'APROBADO' ? p.cantidad_c2 : p.cantidad_c1,
-        motivo: p.motivo,
-      }));
+      .filter((p) => p.id_tag > 0 && p.estado !== 'PENDIENTE')
+      .map((p) => {
+        const fisico = p.cantidad_c2 || p.cantidad_c1 || 0;
+        return {
+          id_producto: p.id_producto,
+          id_tag: p.id_tag,
+          decision: p.estado as 'APROBADO' | 'RECHAZADO',
+          cantidad: fisico,
+          motivo: p.motivo,
+        };
+      });
+
+    if (productosGuardados.length === 0) {
+      this.guardando.set(false);
+      this.notification.error('No hay productos con TAG para guardar. Apruebe o rechace productos con TAG asignado.');
+      return;
+    }
 
     this.preVarianceService.guardar(this.agendaId, productosGuardados).subscribe({
       next: (result) => {

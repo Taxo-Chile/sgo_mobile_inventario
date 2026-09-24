@@ -13,11 +13,12 @@
 
     <div class="flex flex-col gap-4">
       <div class="flex flex-col gap-2">
-        <label class="field-label" for="login-rut">RUT</label>
+        <span class="field-label" id="login-rut-label">RUT</span>
         <ion-input
           id="login-rut"
           class="input-base"
           aria-label="RUT"
+          aria-labelledby="login-rut-label"
           placeholder="Ej: 12345678-5"
           inputmode="text"
           enterkeyhint="next"
@@ -31,11 +32,12 @@
       </div>
 
       <div class="flex flex-col gap-2">
-        <label class="field-label" for="login-password">Contraseña</label>
+        <span class="field-label" id="login-password-label">Contraseña</span>
         <ion-input
           id="login-password"
           class="input-base"
           aria-label="Contraseña"
+          aria-labelledby="login-password-label"
           type="password"
           placeholder="••••••"
           enterkeyhint="go"

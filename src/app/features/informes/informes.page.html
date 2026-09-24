@@ -2,8 +2,9 @@
   <ion-toolbar>
     <ion-buttons slot="start">
       @if (informeActual) {
-        <ion-button aria-label="Volver" (click)="volver()">
-          <ion-icon name="arrow-back-outline" slot="icon-only" aria-hidden="true"></ion-icon>
+        <ion-button aria-label="Volver" (click)="volver()" fill="clear" color="primary">
+          <ion-icon name="arrow-back-outline" slot="start" aria-hidden="true"></ion-icon>
+          <span>Volver</span>
         </ion-button>
       } @else {
         <ion-back-button defaultHref="/home" text="Volver"></ion-back-button>

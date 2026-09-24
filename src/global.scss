@@ -244,6 +244,30 @@ ion-title {
     --highlight-height: 0;
     --highlight-color-valid: var(--app-border);
     --highlight-color-invalid: var(--app-border);
+    --color: var(--app-text);
+    color: var(--app-text);
+
+    &::part(native) {
+      color: var(--app-text);
+      -webkit-text-fill-color: var(--app-text);
+    }
+
+    input {
+      color: var(--app-text) !important;
+      -webkit-text-fill-color: var(--app-text) !important;
+    }
+  }
+
+  ion-input.input-base[type='number'] {
+    &::part(native) {
+      color: var(--app-text);
+      -webkit-text-fill-color: var(--app-text);
+    }
+
+    input {
+      color: var(--app-text) !important;
+      -webkit-text-fill-color: var(--app-text) !important;
+    }
   }
 
   /* ---------- CARDS (Samsung SM-X133) ---------- */

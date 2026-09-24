@@ -15,16 +15,20 @@ export class PreVarianceState {
   readonly estadoCierre = this._estadoCierre.asReadonly();
   readonly fechaCierre = this._fechaCierre.asReadonly();
 
+  readonly productosConTag = computed(() =>
+    this._productos().filter((p) => p.id_tag > 0)
+  );
+
   readonly totalPendientes = computed(() =>
-    this._productos().filter((p) => p.estado === 'PENDIENTE').length
+    this.productosConTag().filter((p) => p.estado === 'PENDIENTE').length
   );
 
   readonly totalAprobados = computed(() =>
-    this._productos().filter((p) => p.estado === 'APROBADO').length
+    this.productosConTag().filter((p) => p.estado === 'APROBADO').length
   );
 
   readonly totalRechazados = computed(() =>
-    this._productos().filter((p) => p.estado === 'RECHAZADO').length
+    this.productosConTag().filter((p) => p.estado === 'RECHAZADO').length
   );
 
   readonly montoTotalDiferencia = computed(() =>
@@ -32,20 +36,20 @@ export class PreVarianceState {
   );
 
   readonly montoTotalAprobado = computed(() =>
-    this._productos()
+    this.productosConTag()
       .filter((p) => p.estado === 'APROBADO')
       .reduce((sum, p) => sum + p.diferencia_monto, 0)
   );
 
   readonly montoTotalRechazado = computed(() =>
-    this._productos()
+    this.productosConTag()
       .filter((p) => p.estado === 'RECHAZADO')
       .reduce((sum, p) => sum + p.diferencia_monto, 0)
   );
 
   readonly puedeFinalizar = computed(() => {
-    const pendientes = this.totalPendientes();
-    return pendientes === 0 && this._productos().length > 0;
+    const conTag = this.productosConTag();
+    return conTag.length > 0 && conTag.every((p) => p.estado !== 'PENDIENTE');
   });
 
   readonly estaFinalizado = computed(() => {

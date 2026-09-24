@@ -19,11 +19,12 @@ import { FormsModule } from '@angular/forms';
     <ion-content class="ion-padding">
       <div class="flex flex-col gap-4">
         <div class="flex flex-col gap-2">
-          <label class="field-label" for="crear-tag-numero">Numero de TAG</label>
+          <span class="field-label" id="crear-tag-numero-label">Numero de TAG</span>
           <ion-input
             id="crear-tag-numero"
             [(ngModel)]="numeroTag"
             aria-label="Numero de TAG"
+            aria-labelledby="crear-tag-numero-label"
             placeholder="Ej: 1001"
             type="number"
             inputmode="numeric"
@@ -35,8 +36,8 @@ import { FormsModule } from '@angular/forms';
         </div>
 
         <div class="flex flex-col gap-2">
-          <label class="field-label" for="crear-tag-tipo">Tipo de ubicacion</label>
-          <ion-select id="crear-tag-tipo" aria-label="Tipo de ubicacion" [(ngModel)]="tipo" placeholder="Seleccionar" class="input-base" interface="popover">
+          <span class="field-label" id="crear-tag-tipo-label">Tipo de ubicacion</span>
+          <ion-select id="crear-tag-tipo" aria-label="Tipo de ubicacion" aria-labelledby="crear-tag-tipo-label" [(ngModel)]="tipo" placeholder="Seleccionar" class="input-base" interface="popover">
             <ion-select-option value="ALTILLO">ALTILLO</ion-select-option>
             <ion-select-option value="PDV">PDV</ion-select-option>
             <ion-select-option value="OTRO">OTRO</ion-select-option>
