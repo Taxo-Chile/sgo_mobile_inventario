@@ -23,13 +23,13 @@ import { FormsModule } from '@angular/forms';
           <ion-input
             id="crear-tag-numero"
             [(ngModel)]="numeroTag"
+            (ionInput)="onNumeroInput($event)"
             aria-label="Numero de TAG"
             aria-labelledby="crear-tag-numero-label"
             placeholder="Ej: 1001"
             type="number"
             inputmode="numeric"
             enterkeyhint="next"
-            maxlength="7"
             min="1"
             class="input-base"
           ></ion-input>
@@ -62,6 +62,14 @@ export class CrearTagModalComponent {
 
   numeroTag = signal<number | null>(null);
   tipo = signal('ALTILLO');
+
+  onNumeroInput(event: CustomEvent<{ value?: string | number | null }>) {
+    const raw = String(event.detail.value ?? '');
+    if (raw.length > 15) {
+      const limited = raw.slice(0, 15);
+      this.numeroTag.set(Number(limited));
+    }
+  }
 
   crear() {
     const tipoMap: Record<string, number> = { ALTILLO: 1, PDV: 2, OTRO: 3 };
