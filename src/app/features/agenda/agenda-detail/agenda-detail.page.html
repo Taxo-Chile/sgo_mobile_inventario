@@ -99,70 +99,58 @@
         <h2 class="text-sm font-semibold" style="color: var(--app-text)">Gestión de Inventario</h2>
 
         <div class="grid grid-cols-2 gap-2">
-          @if (agenda.pre_variance_estado?.completado) {
-            <ion-card button (click)="openPreVariance()" class="card-nav m-0"
-              [style.background]="'var(--app-success-bg)'">
-              <ion-card-content class="flex flex-col items-center gap-2 p-3">
-                <ion-icon name="analytics-outline" class="text-2xl"
-                  [style.color]="'var(--app-success)'">
-                </ion-icon>
-                <span class="text-[11px] font-semibold text-center"
-                  [style.color]="'var(--app-success)'">
-                  Pre Variance
-                </span>
-                <span class="text-xs" [style.color]="'var(--app-success)'">
-                  {{ agenda.pre_variance_estado!.aprobados }}/{{ agenda.pre_variance_estado!.total_productos }}
-                </span>
-              </ion-card-content>
-            </ion-card>
-          } @else if (agenda.reglas_negocio?.pre_variance_habilitada) {
-            <ion-card button (click)="openPreVariance()" class="card-nav m-0">
-              <ion-card-content class="flex flex-col items-center gap-2 p-3">
-                <ion-icon name="analytics-outline" class="text-2xl"></ion-icon>
-                <span class="text-[11px] font-semibold text-center">Pre Variance</span>
-              </ion-card-content>
-            </ion-card>
-          } @else {
-            <ion-card class="card-nav m-0" [style.opacity]="'0.5'">
-              <ion-card-content class="flex flex-col items-center gap-2 p-3">
-                <ion-icon name="analytics-outline" class="text-2xl" style="color: var(--app-text-muted)"></ion-icon>
-                <span class="text-[11px] font-semibold text-center" style="color: var(--app-text-muted)">Pre Variance</span>
-                <span class="text-xs" style="color: var(--app-text-muted)">Requisitos pendientes</span>
-              </ion-card-content>
-            </ion-card>
+          @if (agenda.pre_variance_estado?.completado || agenda.reglas_negocio?.pre_variance_habilitada) {
+            @if (agenda.pre_variance_estado?.completado) {
+              <ion-card button (click)="openPreVariance()" class="card-nav m-0"
+                [style.background]="'var(--app-success-bg)'">
+                <ion-card-content class="flex flex-col items-center gap-2 p-3">
+                  <ion-icon name="analytics-outline" class="text-2xl"
+                    [style.color]="'var(--app-success)'">
+                  </ion-icon>
+                  <span class="text-[11px] font-semibold text-center"
+                    [style.color]="'var(--app-success)'">
+                    Pre Variance
+                  </span>
+                  <span class="text-xs" [style.color]="'var(--app-success)'">
+                    {{ agenda.pre_variance_estado!.aprobados }}/{{ agenda.pre_variance_estado!.total_productos }}
+                  </span>
+                </ion-card-content>
+              </ion-card>
+            } @else {
+              <ion-card button (click)="openPreVariance()" class="card-nav m-0">
+                <ion-card-content class="flex flex-col items-center gap-2 p-3">
+                  <ion-icon name="analytics-outline" class="text-2xl"></ion-icon>
+                  <span class="text-[11px] font-semibold text-center">Pre Variance</span>
+                </ion-card-content>
+              </ion-card>
+            }
           }
 
-          @if (agenda.recuento_estado?.completado) {
-            <ion-card button (click)="openRecuento()" class="card-nav m-0"
-              [style.background]="'var(--app-success-bg)'">
-              <ion-card-content class="flex flex-col items-center gap-2 p-3">
-                <ion-icon name="calculator-outline" class="text-2xl"
-                  [style.color]="'var(--app-success)'">
-                </ion-icon>
-                <span class="text-[11px] font-semibold text-center"
-                  [style.color]="'var(--app-success)'">
-                  Recuento
-                </span>
-                <span class="text-xs" [style.color]="'var(--app-success)'">
-                  {{ agenda.recuento_estado!.corregidos }}/{{ agenda.recuento_estado!.total_productos }}
-                </span>
-              </ion-card-content>
-            </ion-card>
-          } @else if (agenda.reglas_negocio?.recuento_habilitado) {
-            <ion-card button (click)="openRecuento()" class="card-nav m-0">
-              <ion-card-content class="flex flex-col items-center gap-2 p-3">
-                <ion-icon name="calculator-outline" class="text-2xl"></ion-icon>
-                <span class="text-[11px] font-semibold text-center">Recuento</span>
-              </ion-card-content>
-            </ion-card>
-          } @else {
-            <ion-card class="card-nav m-0" [style.opacity]="'0.5'">
-              <ion-card-content class="flex flex-col items-center gap-2 p-3">
-                <ion-icon name="calculator-outline" class="text-2xl" style="color: var(--app-text-muted)"></ion-icon>
-                <span class="text-[11px] font-semibold text-center" style="color: var(--app-text-muted)">Recuento</span>
-                <span class="text-xs" style="color: var(--app-text-muted)">Pre Variance pendiente</span>
-              </ion-card-content>
-            </ion-card>
+          @if (agenda.recuento_estado?.completado || agenda.reglas_negocio?.recuento_habilitado) {
+            @if (agenda.recuento_estado?.completado) {
+              <ion-card button (click)="openRecuento()" class="card-nav m-0"
+                [style.background]="'var(--app-success-bg)'">
+                <ion-card-content class="flex flex-col items-center gap-2 p-3">
+                  <ion-icon name="calculator-outline" class="text-2xl"
+                    [style.color]="'var(--app-success)'">
+                  </ion-icon>
+                  <span class="text-[11px] font-semibold text-center"
+                    [style.color]="'var(--app-success)'">
+                    Recuento
+                  </span>
+                  <span class="text-xs" [style.color]="'var(--app-success)'">
+                    {{ agenda.recuento_estado!.corregidos }}/{{ agenda.recuento_estado!.total_productos }}
+                  </span>
+                </ion-card-content>
+              </ion-card>
+            } @else {
+              <ion-card button (click)="openRecuento()" class="card-nav m-0">
+                <ion-card-content class="flex flex-col items-center gap-2 p-3">
+                  <ion-icon name="calculator-outline" class="text-2xl"></ion-icon>
+                  <span class="text-[11px] font-semibold text-center">Recuento</span>
+                </ion-card-content>
+              </ion-card>
+            }
           }
 
           <ion-card button (click)="openCierres()" class="card-nav m-0">

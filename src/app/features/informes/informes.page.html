@@ -24,22 +24,29 @@
         <p class="page-subtitle">Agenda #{{ agendaId }}</p>
       </div>
 
-      <div class="flex flex-col gap-2">
-        @for (informe of informes; track informe.id) {
-          <ion-card button class="card m-0" style="cursor: pointer;" (click)="seleccionarInforme(informe)">
-            <ion-card-content class="flex items-center gap-3 p-4">
-              <ion-icon [name]="informe.icono" class="text-2xl" aria-hidden="true"
-                [style.color]="'var(--app-' + informe.color + ')'">
-              </ion-icon>
-              <div class="flex flex-col gap-1 flex-1">
-                <span class="text-sm font-bold" style="color: var(--app-text)">{{ informe.nombre }}</span>
-                <span class="text-xs" style="color: var(--app-text-muted)">{{ informe.descripcion }}</span>
-              </div>
-              <ion-icon name="chevron-forward-outline" style="color: var(--app-text-muted)" aria-hidden="true"></ion-icon>
-            </ion-card-content>
-          </ion-card>
-        }
-      </div>
+      @if (loadingEstado) {
+        <div class="flex justify-center py-8" role="status" aria-live="polite">
+          <ion-spinner name="crescent" aria-label="Cargando"></ion-spinner>
+          <span class="ion-sr-only">Cargando estado…</span>
+        </div>
+      } @else {
+        <div class="flex flex-col gap-2">
+          @for (informe of informes; track informe.id) {
+            <ion-card button class="card m-0" style="cursor: pointer;" (click)="seleccionarInforme(informe)">
+              <ion-card-content class="flex items-center gap-3 p-4">
+                <ion-icon [name]="informe.icono" class="text-2xl" aria-hidden="true"
+                  [style.color]="'var(--app-' + informe.color + ')'">
+                </ion-icon>
+                <div class="flex flex-col gap-1 flex-1">
+                  <span class="text-sm font-bold" style="color: var(--app-text)">{{ informe.nombre }}</span>
+                  <span class="text-xs" style="color: var(--app-text-muted)">{{ informe.descripcion }}</span>
+                </div>
+                <ion-icon name="chevron-forward-outline" style="color: var(--app-text-muted)" aria-hidden="true"></ion-icon>
+              </ion-card-content>
+            </ion-card>
+          }
+        </div>
+      }
     } @else {
       @if (loading) {
         <div class="flex justify-center py-8" role="status" aria-live="polite">

@@ -22,10 +22,11 @@ export class InformesPage implements OnInit {
   private notification = inject(NotificationService);
   private http = inject(HttpClient);
 
-
-  informes = this.informesService.INFORMES;
+  allInformes = this.informesService.INFORMES;
+  informes: InformeItem[] = [];
   agendaId = 0;
   loading = false;
+  loadingEstado = true;
   informeActual: string | null = null;
   datosInforme: any = null;
   enviandoCorreo = false;
@@ -35,6 +36,43 @@ export class InformesPage implements OnInit {
     this.agendaId = Number(this.route.snapshot.paramMap.get('id'));
     if (!this.agendaId) {
       this.router.navigate(['/home']);
+      return;
+    }
+    this.cargarEstadoInformes();
+  }
+
+  private async cargarEstadoInformes() {
+    this.loadingEstado = true;
+    try {
+      const res: any = await this.http.get(`tablet/informes/ejecutivo.php?agenda_id=${this.agendaId}`);
+      const data = res?.data ?? res;
+      const capturas = data?.capturas ?? {};
+      const etapas = data?.etapas ?? {};
+      const tieneC1 = (capturas.c1 ?? 0) > 0;
+      const tieneC2 = (capturas.c2 ?? 0) > 0;
+      const tienePreVariance = etapas.pre_variance != null;
+      const tieneSnapshot = etapas.cierre_final != null;
+
+      this.informes = this.allInformes.filter((inf) => {
+        switch (inf.id) {
+          case 'ejecutivo':
+            return true;
+          case 'captura-final':
+            return tieneC1;
+          case 'validacion-tag':
+            return tieneC2;
+          case 'prevariance':
+            return tienePreVariance;
+          case 'cierre-final':
+            return tieneSnapshot;
+          default:
+            return true;
+        }
+      });
+    } catch {
+      this.informes = this.allInformes.filter((inf) => inf.id === 'ejecutivo');
+    } finally {
+      this.loadingEstado = false;
     }
   }
 
