@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Permite trafico HTTP plano contra cualquier host.
+
+    No es una preferencia: el backend (ws/api) corre en HTTP plano en la LAN y
+    la URL del APK de autoactualizacion (50.16.13.230) tambien es HTTP, asi que
+    sin esto Android 9+ corta la descarga con ERR_CLEARTEXT_NOT_PERMITTED.
+
+    Ojo con el detalle que confunde: android:networkSecurityConfig ANULA a
+    android:usesCleartextTraffic="true" del manifest. Con una lista blanca de
+    hosts, cualquier host no enumerado quedaba bloqueado aunque el manifest
+    dijera lo contrario, y la lista quedaba vieja con cada IP nueva de
+    desarrollo o de live reload.
+
+    Cuando el servicio pase a HTTPS, esto vuelve a acotarse.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true" />
+</network-security-config>

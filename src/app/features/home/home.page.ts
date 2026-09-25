@@ -11,6 +11,7 @@ import { ThemeState } from '../../state/theme/theme.state';
 import { Agenda } from '../../domain/agenda/models/agenda.model';
 import { OfertaActualizacionService } from '../../shared/services/oferta-actualizacion.service';
 import { APP_VERSION } from '../../core/version';
+import { AppInfoService } from '../../core/app-info.service';
 
 @Component({
   selector: 'app-home',
@@ -28,13 +29,21 @@ export class HomePage implements OnInit {
   private notification = inject(NotificationService);
   private themeState = inject(ThemeState);
   private oferta = inject(OfertaActualizacionService);
+  private appInfo = inject(AppInfoService);
 
   user = this.authState.user;
   agendas = this.agendaState.agendas;
   loading = this.agendaState.loading;
   isDark = this.themeState.isDark;
 
-  /** Versión mostrada en el menú lateral. */
+  /*
+   * Versión mostrada en el menú lateral.
+   *
+   * Arranca con APP_VERSION para no dejar el texto vacío en el navegador, y en
+   * ngOnInit se reemplaza por la que reporta Android. Es la misma pregunta que
+   * hace la autoactualización: si el operador actualizó a 0.1.1, el menú tiene
+   * que decir 0.1.1 aunque el build se haya hecho con otra constante.
+   */
   appVersion = APP_VERSION;
 
   /*
@@ -93,6 +102,7 @@ export class HomePage implements OnInit {
 
   ngOnInit() {
     this.loadAgendas();
+    void this.appInfo.version().then((v) => (this.appVersion = v.nombre));
   }
 
   /*
